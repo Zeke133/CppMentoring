@@ -120,7 +120,7 @@ struct ZIP_END_OF_CD    {
     uint32_t  cd_size;                  // Size of the central directory in bytes
     uint32_t  offset;                   // Offset of the start of the central directory on the disk on which the central directory starts
     uint16_t  comment_len;              // The length of the following comment field
-    uint8_t   comment[];                // Optional comment for the Zip file
+    //uint8_t   comment[];                // Optional comment for the Zip file
 };
 #pragma pack(pop)
 
@@ -144,9 +144,9 @@ struct ZIP_CD_FILE_HEADER    {
     INT_ATTR    internal_attr;          // Internal file attributes:
     uint32_t    external_attr;          // External file attributes: host-system dependent
     uint32_t    offset_local_header;    // ORelative offset of local header. This is the offset of where to find the corresponding local file header from the start of the first disk.
-    uint8_t     file_name[];            // the name of the file including an optional relative path. All slashes in the path should be forward slashes '/'.
-    uint8_t     extra_field[];          // Used to store additional information. The field consistes of a sequence of header and data pairs, where the header has a 2 byte identifier and a 2 byte data size field.
-    uint8_t     file_comment[];         // An optional comment for the file.
+    // uint8_t     file_name[];            // the name of the file including an optional relative path. All slashes in the path should be forward slashes '/'.
+    // uint8_t     extra_field[];          // Used to store additional information. The field consistes of a sequence of header and data pairs, where the header has a 2 byte identifier and a 2 byte data size field.
+    // uint8_t     file_comment[];         // An optional comment for the file.
 };
 #pragma pack(pop)
 
@@ -164,8 +164,8 @@ struct ZIP_LOCAL_FILE_HEADER    {
     uint32_t    uncompressed_size;      // Uncompressed size 	if archive is in ZIP64 format, this filed is 0xffffffff and the length is stored in the extra field
     uint16_t    file_name_len;          // File name length 	the length of the file name field below
     uint16_t    extra_field_len;        // Extra field length 	the length of the extra field below
-    uint8_t     file_name[];            // the name of the file including an optional relative path. All slashes in the path should be forward slashes '/'.
-    uint8_t     extra_field[];          // Used to store additional information. The field consistes of a sequence of header and data pairs, where the header has a 2 byte identifier and a 2 byte data size field.
+    // uint8_t     file_name[];            // the name of the file including an optional relative path. All slashes in the path should be forward slashes '/'.
+    // uint8_t     extra_field[];          // Used to store additional information. The field consistes of a sequence of header and data pairs, where the header has a 2 byte identifier and a 2 byte data size field.
 };
 #pragma pack(pop)
 
