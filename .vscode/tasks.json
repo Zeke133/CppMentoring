@@ -11,6 +11,7 @@
                 "-g",
                 "${workspaceRoot}/Source/main.cpp",
                 "${workspaceRoot}/Source/Zipper/Zipper.cpp",
+                "${workspaceRoot}/Source/Zipper/ZipperOstreams.cpp",
                 "-L",
                 "${workspaceRoot}/Lib",
                 "-l",
