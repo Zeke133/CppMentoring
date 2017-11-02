@@ -103,6 +103,7 @@ struct INT_ATTR
 //---------------------------------------------------
 
 // End of central directory record
+#define ZIP_END_OF_CD_SIGNATURE         0x06054b50
 #pragma pack(push,1)
 struct ZIP_END_OF_CD    {
     uint32_t  signature;                // The signature of end of central directory record. This is always '\x50\x4b\x05\x06'.
@@ -118,6 +119,7 @@ struct ZIP_END_OF_CD    {
 #pragma pack(pop)
 
 // Central directory file header
+#define ZIP_CD_FILE_HEADER_SIGNATURE    0x02014b50
 #pragma pack(push,1)
 struct ZIP_CD_FILE_HEADER    {
     uint32_t    signature;              // The signature of the file header. This is always '\x50\x4b\x01\x02'.
@@ -136,17 +138,18 @@ struct ZIP_CD_FILE_HEADER    {
     uint16_t    disk_start;             // Disk # start 	the number of the disk on which this file exists
     INT_ATTR    internal_attr;          // Internal file attributes:
     uint32_t    external_attr;          // External file attributes: host-system dependent
-    uint32_t    offset_local_header;    // ORelative offset of local header. This is the offset of where to find the corresponding local file header from the start of the first disk.
+    uint32_t    offset_local_header;    // Relative offset of local header. This is the offset of where to find the corresponding local file header from the start of the first disk.
     // uint8_t     file_name[];            // the name of the file including an optional relative path. All slashes in the path should be forward slashes '/'.
     // uint8_t     extra_field[];          // Used to store additional information. The field consistes of a sequence of header and data pairs, where the header has a 2 byte identifier and a 2 byte data size field.
-    // uint8_t     file_comment[];         // An optional comment for the file.
+    // uint8_t     file_comment[];         // An optional comment for the file.    
 };
 #pragma pack(pop)
 
 // Local file headers
+#define ZIP_LOCAL_FILE_HEADER_SIGNATURE 0x04034b50
 #pragma pack(push,1)
 struct ZIP_LOCAL_FILE_HEADER    {
-    uint32_t    signature;              // The signature of the file header. This is always '\x50\x4b\x01\x02'.
+    uint32_t    signature;              // The signature of the file header. This is always '\x50\x4b\x03\x04'.
     uint16_t    version_needed;         // PKZip version needed to extract
     FLAGS       flags;                  // General purpose bit flag:
     COMPRESSION compression;            // Compression method:
@@ -174,3 +177,4 @@ struct ZIP_LOCAL_FILE_HEADER    {
 // sizeof(ZIP_LOCAL_FILE_HEADER) = 30
 
 #endif
+

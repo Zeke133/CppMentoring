@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include "ZipperTypes.h"
 #include "ZipperOstreams.h"
@@ -17,7 +18,13 @@ public:
     ~Zipper();
 
 private:
-    ZIP_END_OF_CD * GetZipEndOfCentralDirectory(int8_t * file, int32_t size);
+    uint8_t *   ZipBegin;
+    uint32_t    ZipSize;
+    ZIP_END_OF_CD * CentralDirectoryEnd;
+    vector<ZIP_CD_FILE_HEADER*> ZipContent;
+
+    bool    GetZipEndOfCentralDirectory();
+    bool    FillZipContent();
 
 };
 
