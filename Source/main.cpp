@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <iterator>
 
 #include "Zipper\Zipper.h"
 
@@ -8,37 +9,37 @@ using namespace std;
 
 
 int main(void)
-{
+{    
     string fileName;
 
     cout << "Input full file name to open: ";
     getline(cin, fileName);
 
-    ifstream inFile(fileName, ios::in | ios::binary);
+    ifstream fileStream(fileName, ios::in | ios::binary);
 
-    if(!inFile.is_open())
+    if(!fileStream.is_open())
     {
         cerr << "Error opening file!\n";
         return 1;
     }
-    inFile.seekg(0, inFile.end);
-    int32_t len = inFile.tellg();
-    inFile.seekg(0, inFile.beg);
-    cout << "File size: " << len << endl;
 
-    int8_t * file = new int8_t [len];
+    fileStream.seekg(0, fileStream.end);
+    int32_t len = fileStream.tellg();
+    fileStream.seekg(0, fileStream.beg);
+    cout << "File size: " << len << endl;   
+    
+    vector<char> file((istreambuf_iterator<char> (fileStream)), istreambuf_iterator<char> ());
 
-    cout << "Reading..." << endl;
-    inFile.read((char*)file, len);
-    if (inFile)
+    cout << file.size() << " bytes was cached" << endl;
+    
+    if (fileStream)
         cout << "All data read successfully.\n";
     else
-        cout << "Error: only " << inFile.gcount() << " could be read\n";
-    inFile.close();
+        cout << "Error: only " << fileStream.gcount() << " could be read\n";
+    fileStream.close();
 
-    Zipper zip(file, len);
-
-    delete(file);
+    vector<char> &fileRef = file;
+    Zipper zip(fileRef);
         
     return 0; 
 }

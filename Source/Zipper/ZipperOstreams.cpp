@@ -4,27 +4,27 @@ ostream &operator<<( ostream &output, const VERSION_MADE_BY &ver)
 {
     switch (ver)
     {
-        case MS_DOS:    output << "MS_DOS";     break;
-        case Amiga:     output << "Amiga";      break;
-        case OpenVMS:   output << "OpenVMS";    break;
-        case UNIX:      output << "UNIX";       break;
-        case VM_CMS:    output << "VM_CMS";     break;
-        case Atari:     output << "Atari";      break;
-        case OS_2:      output << "OS_2";       break;
-        case Macintosh: output << "Macintosh";  break;
-        case Z_System:  output << "Z_System";   break;
-        case CP_M:      output << "CP_M";       break;
-        case NTFS:      output << "NTFS";       break;
-        case MVS:       output << "MVS";        break;
-        case VSE:       output << "VSE";        break;
-        case Acorn_Risc: output << "Acorn_Risc"; break;
-        case VFAT:      output << "VFAT";       break;
-        case alternate_MVS: output << "alternate_MVS"; break;
-        case BeOS:      output << "BeOS";       break;
-        case Tandem:    output << "Tandem";     break;
-        case OS_400:    output << "OS_400";     break;
-        case OS_X:      output << "OS_X";       break;
-        default:        output << "UNKNOWN!";   break;
+        case VERSION_MADE_BY::MS_DOS:    output << "MS_DOS";     break;
+        case VERSION_MADE_BY::Amiga:     output << "Amiga";      break;
+        case VERSION_MADE_BY::OpenVMS:   output << "OpenVMS";    break;
+        case VERSION_MADE_BY::UNIX:      output << "UNIX";       break;
+        case VERSION_MADE_BY::VM_CMS:    output << "VM_CMS";     break;
+        case VERSION_MADE_BY::Atari:     output << "Atari";      break;
+        case VERSION_MADE_BY::OS_2:      output << "OS_2";       break;
+        case VERSION_MADE_BY::Macintosh: output << "Macintosh";  break;
+        case VERSION_MADE_BY::Z_System:  output << "Z_System";   break;
+        case VERSION_MADE_BY::CP_M:      output << "CP_M";       break;
+        case VERSION_MADE_BY::NTFS:      output << "NTFS";       break;
+        case VERSION_MADE_BY::MVS:       output << "MVS";        break;
+        case VERSION_MADE_BY::VSE:       output << "VSE";        break;
+        case VERSION_MADE_BY::Acorn_Risc: output << "Acorn_Risc"; break;
+        case VERSION_MADE_BY::VFAT:      output << "VFAT";       break;
+        case VERSION_MADE_BY::alternate_MVS: output << "alternate_MVS"; break;
+        case VERSION_MADE_BY::BeOS:      output << "BeOS";       break;
+        case VERSION_MADE_BY::Tandem:    output << "Tandem";     break;
+        case VERSION_MADE_BY::OS_400:    output << "OS_400";     break;
+        case VERSION_MADE_BY::OS_X:      output << "OS_X";       break;
+        default:                         output << "UNKNOWN!";   break;
     }
     return output;
 }
@@ -33,22 +33,22 @@ ostream &operator<<( ostream &output, const COMPRESSION &compression)
 {
     switch (compression)
     {
-        case no:            output << "no";                                         break;
-        case shrunk:        output << "shrunk";                                     break;
-        case reduced_1:     output << "reduced with compression factor 1";          break;
-        case reduced_2:     output << "reduced with compression factor 2";          break;
-        case reduced_3:     output << "reduced with compression factor 3";          break;
-        case reduced_4:     output << "reduced with compression factor 4";          break;
-        case imploded:      output << "imploded";                                   break;
-        case deflated:      output << "deflated";                                   break;
-        case enh_deflated:  output << "enhanced deflated";                          break;
-        case PKWare:        output << "PKWare DCL imploded";                        break;
-        case BZIP2:         output << "compressed using BZIP2";                     break;
-        case LZMA:          output << "LZMA";                                       break;
-        case IBM_TERSE:     output << "compressed using IBM TERSE";                 break;
-        case IBM_LZ77:      output << "IBM LZ77 z";                                 break;
-        case PPMd:          output << "PPMd version I, Rev 1";                      break;
-        default:            output << "UNKNOWN!";                                   break;
+        case COMPRESSION::no:            output << "no";                                         break;
+        case COMPRESSION::shrunk:        output << "shrunk";                                     break;
+        case COMPRESSION::reduced_1:     output << "reduced with compression factor 1";          break;
+        case COMPRESSION::reduced_2:     output << "reduced with compression factor 2";          break;
+        case COMPRESSION::reduced_3:     output << "reduced with compression factor 3";          break;
+        case COMPRESSION::reduced_4:     output << "reduced with compression factor 4";          break;
+        case COMPRESSION::imploded:      output << "imploded";                                   break;
+        case COMPRESSION::deflated:      output << "deflated";                                   break;
+        case COMPRESSION::enh_deflated:  output << "enhanced deflated";                          break;
+        case COMPRESSION::PKWare:        output << "PKWare DCL imploded";                        break;
+        case COMPRESSION::BZIP2:         output << "compressed using BZIP2";                     break;
+        case COMPRESSION::LZMA:          output << "LZMA";                                       break;
+        case COMPRESSION::IBM_TERSE:     output << "compressed using IBM TERSE";                 break;
+        case COMPRESSION::IBM_LZ77:      output << "IBM LZ77 z";                                 break;
+        case COMPRESSION::PPMd:          output << "PPMd version I, Rev 1";                      break;
+        default:                         output << "UNKNOWN!";                                   break;
     }
     return output;
 };
@@ -177,18 +177,16 @@ ostream &operator<<( ostream &output, const ZIP_LOCAL_FILE_HEADER &locFileHeader
     output << "\t" << "file_name_len: " << locFileHeader.file_name_len << endl;
     output << "\t" << "extra_field_len: " << locFileHeader.extra_field_len << endl;
     
-    uint8_t * str = (uint8_t*)&((&locFileHeader)[1]);
-    if(locFileHeader.file_name_len)
+    if(locFileHeader.isName())
     {
         output << "\t" << "file_name: ";
-        put_n(output, str, locFileHeader.file_name_len);
+        put_n(output, locFileHeader.getName(), locFileHeader.file_name_len);
         output << endl;
-        str += locFileHeader.file_name_len;
     }
-    if(locFileHeader.extra_field_len)
+    if(locFileHeader.isExtraField())
     {
         output << "\t" << "extra_field: ";
-        put_n(output, str, locFileHeader.extra_field_len);
+        put_n(output, locFileHeader.getExtraField(), locFileHeader.extra_field_len);
         output << endl;
     }
 
@@ -216,25 +214,22 @@ ostream &operator<<( ostream &output, const ZIP_CD_FILE_HEADER &cdFileHeader)
     output << "\t" << "external_attr: " << cdFileHeader.external_attr << endl;
     output << "\t" << "offset_local_header: " << cdFileHeader.offset_local_header << " = " << dec << cdFileHeader.offset_local_header << endl;
     
-    uint8_t * str = (uint8_t*)&((&cdFileHeader)[1]);
-    if(cdFileHeader.file_name_len)
+    if(cdFileHeader.isName())
     {
         output << "\t" << "file_name: ";
-        put_n(output, str, cdFileHeader.file_name_len);
+        put_n(output, cdFileHeader.getName(), cdFileHeader.file_name_len);
         output << endl;
-        str += cdFileHeader.file_name_len;
     }
-    if(cdFileHeader.extra_field_len)
+    if(cdFileHeader.isExtraField())
     {
         output << "\t" << "extra_field: ";
-        put_n(output, str, cdFileHeader.extra_field_len);
+        put_n(output, cdFileHeader.getExtraField(), cdFileHeader.extra_field_len);
         output << endl;
-        str += cdFileHeader.extra_field_len;
     }
-    if(cdFileHeader.file_comm_len)
+    if(cdFileHeader.isComment())
     {
         output << "\t" << "file_comment: ";
-        put_n(output, str, cdFileHeader.file_comm_len);
+        put_n(output, cdFileHeader.getComment(), cdFileHeader.file_comm_len);
         output << endl;
     }
     
@@ -253,11 +248,10 @@ ostream &operator<<( ostream &output, const ZIP_END_OF_CD &endOfCd)
     output << "\t" << "offset: " << endOfCd.offset << " = " << dec << endOfCd.offset << endl;
     output << "\t" << "comment_len: " << endOfCd.comment_len << endl;
 
-    uint8_t * str = (uint8_t*)&((&endOfCd)[1]);
-    if(endOfCd.comment_len)
+    if(endOfCd.isComment())
     {
         output << "\t" << "comment_len: ";
-        put_n(output, str, endOfCd.comment_len);
+        put_n(output, endOfCd.getComment(), endOfCd.comment_len);
         output << endl;
     }
 

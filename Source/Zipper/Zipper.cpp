@@ -2,11 +2,11 @@
 
 using namespace std;
 
-Zipper::Zipper(int8_t * file, int32_t size)
-{
-    ZipBegin = (uint8_t *)file;
-    ZipSize = size;
-
+Zipper::Zipper(const vector<char> &file) :
+        zipSize(file.size()),
+        zipBegin((uint8_t *)file.data()),
+        zipEnd(zipBegin + zipSize)
+{    
     cout << "Zipper get file" << endl;
     
     if(!GetZipEndOfCentralDirectory())
@@ -45,7 +45,30 @@ Zipper::Zipper(int8_t * file, int32_t size)
         if(i >= ZipContent.size())
             cout << "Wrong number!" << endl;
         else
+        {
             cout << *ZipContent[i] << endl;
+
+            ZIP_LOCAL_FILE_HEADER * locHeader = (ZIP_LOCAL_FILE_HEADER * )(zipBegin + ZipContent[i]->offset_local_header);
+
+            cout << *locHeader << endl;
+
+            uint32_t out_len = locHeader->uncompressed_size;
+            uint32_t in_len = locHeader->compressed_size;
+            uint8_t * inDataPtr = (uint8_t *)locHeader + locHeader->getRealSize();
+            vector<uint8_t> decompressedFile;
+            decompressedFile.reserve(locHeader->uncompressed_size);
+            uint32_t res = 0;
+               
+            // PUFF
+            cout << "puff = " << (res = puff(decompressedFile.data(), (long unsigned int*)&out_len, inDataPtr, (long unsigned int*)&in_len)) << endl;
+            
+            // TINF100
+            // tinf_init();
+            // cout << "tinf_uncompress = " << (res = tinf_uncompress(decompressedFile.data(), &out_len, inDataPtr, in_len)) << endl;
+
+            if(res == 0) cout << "Decompressed file:\n" << decompressedFile.data() << endl;
+
+        }
     }
 }
 
@@ -58,12 +81,11 @@ Zipper::~Zipper()
 // Return false if error
 bool Zipper::GetZipEndOfCentralDirectory()
 {
-    uint8_t * ptr = ZipBegin;
+    uint8_t * ptr = (uint8_t *)zipEnd;
 
-    ptr += ZipSize;
     while(!(*ptr == 0x50 && *(ptr+1) == 0x4b && *(ptr+2) == 0x05 && *(ptr+3) == 0x06))
     {
-        if(ptr == ZipBegin) return false;
+        if(ptr == zipBegin) return false;
         ptr--;
     }
 
@@ -74,15 +96,15 @@ bool Zipper::GetZipEndOfCentralDirectory()
 // Return false if error in headers
 bool Zipper::FillZipContent()
 {
-    ZIP_CD_FILE_HEADER * ptr = (ZIP_CD_FILE_HEADER *)(ZipBegin + CentralDirectoryEnd->offset);
+    ZIP_CD_FILE_HEADER * ptr = (ZIP_CD_FILE_HEADER *)(zipBegin + CentralDirectoryEnd->offset);
 
     for (uint16_t i = 0; i < CentralDirectoryEnd->total_entries; i++)
     {
         if(ptr->signature != ZIP_CD_FILE_HEADER_SIGNATURE) return false;
+
         ZipContent.push_back(ptr);
-        uint8_t * temp = (uint8_t*)ptr;
-        temp += sizeof(ZIP_CD_FILE_HEADER) + ptr->file_name_len + ptr->extra_field_len + ptr->file_comm_len;
-        ptr = (ZIP_CD_FILE_HEADER *)temp;
+
+        ptr = (ZIP_CD_FILE_HEADER *)((uint8_t *)ptr + ptr->getRealSize());
     }
     return true;
 }

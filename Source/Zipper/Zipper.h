@@ -7,19 +7,20 @@
 
 #include "ZipperTypes.h"
 #include "ZipperOstreams.h"
-
-#include <zlib.h>
+#include "..\Tinf100\tinf.h"
+#include "..\Puff\puff.h"
 
 
 class Zipper
 {
 public:
-    Zipper(int8_t * file, int32_t size);
+    Zipper(const vector<char> &file);
     ~Zipper();
 
 private:
-    uint8_t *   ZipBegin;
-    uint32_t    ZipSize;
+    const uint32_t    zipSize;
+    const uint8_t *   zipBegin;
+    const uint8_t *   zipEnd;
     ZIP_END_OF_CD * CentralDirectoryEnd;
     vector<ZIP_CD_FILE_HEADER*> ZipContent;
 

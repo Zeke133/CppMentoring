@@ -1,9 +1,7 @@
 #ifndef ZIPPER_TYPES_H
 #define ZIPPER_TYPES_H
 
-#include <string>
-
-enum VERSION_MADE_BY : uint8_t
+enum class VERSION_MADE_BY : uint8_t
 {
     MS_DOS,                             // 0 - MS-DOS and OS/2 (FAT / VFAT / FAT32 file systems)
     Amiga,                              // 1 - Amiga
@@ -52,7 +50,7 @@ struct FLAGS
 };
 
 // Compression method
-enum COMPRESSION : uint16_t
+enum class COMPRESSION : uint16_t
 {
     no,                                 // 00: no compression
     shrunk,                             // 01: shrunk
@@ -114,7 +112,19 @@ struct ZIP_END_OF_CD    {
     uint32_t  cd_size;                  // Size of the central directory in bytes
     uint32_t  offset;                   // Offset of the start of the central directory on the disk on which the central directory starts
     uint16_t  comment_len;              // The length of the following comment field
-    //uint8_t   comment[];                // Optional comment for the Zip file
+    //uint8_t   comment[];              // Optional comment for the Zip file
+    bool isComment() const
+    {
+        return this->comment_len > 0;
+    }
+    uint32_t    getRealSize() const
+    {
+        return sizeof(ZIP_END_OF_CD) + this->comment_len;
+    }
+    const uint8_t *   getComment() const
+    {
+        return (const uint8_t *)(this+1);
+    }
 };
 #pragma pack(pop)
 
@@ -139,9 +149,37 @@ struct ZIP_CD_FILE_HEADER    {
     INT_ATTR    internal_attr;          // Internal file attributes:
     uint32_t    external_attr;          // External file attributes: host-system dependent
     uint32_t    offset_local_header;    // Relative offset of local header. This is the offset of where to find the corresponding local file header from the start of the first disk.
-    // uint8_t     file_name[];            // the name of the file including an optional relative path. All slashes in the path should be forward slashes '/'.
-    // uint8_t     extra_field[];          // Used to store additional information. The field consistes of a sequence of header and data pairs, where the header has a 2 byte identifier and a 2 byte data size field.
-    // uint8_t     file_comment[];         // An optional comment for the file.    
+    // uint8_t     file_name[];         // the name of the file including an optional relative path. All slashes in the path should be forward slashes '/'.
+    // uint8_t     extra_field[];       // Used to store additional information. The field consistes of a sequence of header and data pairs, where the header has a 2 byte identifier and a 2 byte data size field.
+    // uint8_t     file_comment[];      // An optional comment for the file.
+    bool isName() const
+    {
+        return this->file_name_len > 0;
+    }
+    bool isExtraField() const
+    {
+        return this->extra_field_len > 0;
+    }
+    bool isComment() const
+    {
+        return this->file_comm_len > 0;
+    }    
+    const uint8_t *   getName() const
+    {
+        return (const uint8_t *)(this+1);
+    }
+    const uint8_t *   getExtraField() const
+    {
+        return (const uint8_t *)(this+1) + this->file_name_len;
+    }
+    const uint8_t *   getComment() const
+    {
+        return (const uint8_t *)(this+1) + this->file_name_len + this->extra_field_len;
+    }
+    uint32_t    getRealSize() const
+    {
+        return sizeof(ZIP_CD_FILE_HEADER) + this->file_name_len + this->extra_field_len + this->file_comm_len;
+    }
 };
 #pragma pack(pop)
 
@@ -162,6 +200,26 @@ struct ZIP_LOCAL_FILE_HEADER    {
     uint16_t    extra_field_len;        // Extra field length 	the length of the extra field below
     // uint8_t     file_name[];            // the name of the file including an optional relative path. All slashes in the path should be forward slashes '/'.
     // uint8_t     extra_field[];          // Used to store additional information. The field consistes of a sequence of header and data pairs, where the header has a 2 byte identifier and a 2 byte data size field.
+    bool isName() const
+    {
+        return this->file_name_len > 0;
+    }
+    bool isExtraField() const
+    {
+        return this->extra_field_len > 0;
+    }   
+    const uint8_t *   getName() const
+    {
+        return (const uint8_t *)(this+1);
+    }
+    const uint8_t *   getExtraField() const
+    {
+        return (const uint8_t *)(this+1) + this->file_name_len;
+    }
+    uint32_t    getRealSize() const
+    {
+        return sizeof(ZIP_LOCAL_FILE_HEADER) + this->file_name_len + this->extra_field_len;
+    }
 };
 #pragma pack(pop)
 
