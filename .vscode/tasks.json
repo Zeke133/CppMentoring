@@ -19,7 +19,8 @@
                 "${workspaceRoot}/Source/Tinf100/crc32.c",
                 "${workspaceRoot}/Source/Tinf100/tinflate.c",
                 "${workspaceRoot}/Source/Puff/puff.c",
-                "-Wall"
+                "-Wall",
+                "-std=c++17"
             ],
             "group": {
                 "kind": "build",

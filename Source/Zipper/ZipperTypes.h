@@ -1,6 +1,8 @@
 #ifndef ZIPPER_TYPES_H
 #define ZIPPER_TYPES_H
 
+#include <string_view>
+
 enum class VERSION_MADE_BY : uint8_t
 {
     MS_DOS,                             // 0 - MS-DOS and OS/2 (FAT / VFAT / FAT32 file systems)
@@ -113,17 +115,13 @@ struct ZIP_END_OF_CD    {
     uint32_t  offset;                   // Offset of the start of the central directory on the disk on which the central directory starts
     uint16_t  comment_len;              // The length of the following comment field
     //uint8_t   comment[];              // Optional comment for the Zip file
-    bool isComment() const
-    {
-        return this->comment_len > 0;
-    }
     uint32_t    getRealSize() const
     {
         return sizeof(ZIP_END_OF_CD) + this->comment_len;
     }
-    const uint8_t *   getComment() const
+    std::string_view GetComment() const
     {
-        return (const uint8_t *)(this+1);
+        return std::string_view((const char *)(this+1), this->comment_len);
     }
 };
 #pragma pack(pop)
@@ -152,29 +150,17 @@ struct ZIP_CD_FILE_HEADER    {
     // uint8_t     file_name[];         // the name of the file including an optional relative path. All slashes in the path should be forward slashes '/'.
     // uint8_t     extra_field[];       // Used to store additional information. The field consistes of a sequence of header and data pairs, where the header has a 2 byte identifier and a 2 byte data size field.
     // uint8_t     file_comment[];      // An optional comment for the file.
-    bool isName() const
+    std::string_view GetName() const
     {
-        return this->file_name_len > 0;
+        return std::string_view((const char *)(this+1), this->file_name_len);
     }
-    bool isExtraField() const
+    std::string_view GetExtraField() const
     {
-        return this->extra_field_len > 0;
+        return std::string_view((const char *)(this+1) + this->file_name_len, this->extra_field_len);
     }
-    bool isComment() const
+    std::string_view GetComment() const
     {
-        return this->file_comm_len > 0;
-    }    
-    const uint8_t *   getName() const
-    {
-        return (const uint8_t *)(this+1);
-    }
-    const uint8_t *   getExtraField() const
-    {
-        return (const uint8_t *)(this+1) + this->file_name_len;
-    }
-    const uint8_t *   getComment() const
-    {
-        return (const uint8_t *)(this+1) + this->file_name_len + this->extra_field_len;
+        return std::string_view((const char *)(this+1) + this->file_name_len + this->extra_field_len, this->file_comm_len);
     }
     uint32_t    getRealSize() const
     {
@@ -200,21 +186,13 @@ struct ZIP_LOCAL_FILE_HEADER    {
     uint16_t    extra_field_len;        // Extra field length 	the length of the extra field below
     // uint8_t     file_name[];            // the name of the file including an optional relative path. All slashes in the path should be forward slashes '/'.
     // uint8_t     extra_field[];          // Used to store additional information. The field consistes of a sequence of header and data pairs, where the header has a 2 byte identifier and a 2 byte data size field.
-    bool isName() const
+    std::string_view GetName() const
     {
-        return this->file_name_len > 0;
+        return std::string_view((const char *)(this+1), this->file_name_len);
     }
-    bool isExtraField() const
+    std::string_view GetExtraField() const
     {
-        return this->extra_field_len > 0;
-    }   
-    const uint8_t *   getName() const
-    {
-        return (const uint8_t *)(this+1);
-    }
-    const uint8_t *   getExtraField() const
-    {
-        return (const uint8_t *)(this+1) + this->file_name_len;
+        return std::string_view((const char *)(this+1) + this->file_name_len, this->extra_field_len);
     }
     uint32_t    getRealSize() const
     {

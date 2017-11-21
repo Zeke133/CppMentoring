@@ -29,6 +29,9 @@
         "vector": "cpp",
         "xstring": "cpp",
         "xutility": "cpp",
-        "xiosbase": "cpp"
+        "xiosbase": "cpp",
+        "cstddef": "cpp",
+        "xstddef": "cpp",
+        "xtr1common": "cpp"
     }
 }

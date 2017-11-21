@@ -13,20 +13,23 @@
 
 class Zipper
 {
+
 public:
-    Zipper(const vector<char> &file);
+
+    Zipper(const vector<char> &sourceFile);
     ~Zipper();
 
+    Zipper& PutZipContent(ostream &output);
+
 private:
-    const uint32_t    zipSize;
-    const uint8_t *   zipBegin;
-    const uint8_t *   zipEnd;
+
+    const vector<char> &zipSourceFile;
     ZIP_END_OF_CD * CentralDirectoryEnd;
     vector<ZIP_CD_FILE_HEADER*> ZipContent;
 
-    bool    GetZipEndOfCentralDirectory();
-    bool    FillZipContent();
-
+    void    InitZipEndOfCentralDirectory();
+    void    FillZipContent();
+    
 };
 
 #endif

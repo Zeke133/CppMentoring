@@ -55,68 +55,42 @@ ostream &operator<<( ostream &output, const COMPRESSION &compression)
 
 ostream &operator<<( ostream &output, const FLAGS &flags)
 {
+    const int bit_count = 16;
+    const char * bit_names[bit_count] = 
+    {
+        "encrypted file",
+        "compression option_1",
+        "compression option_2",
+        "data descriptor",
+        "enhanced deflation",
+        "compressed patched data",
+        "strong encryption",
+        "unused_1",
+        "unused_2",
+        "unused_3",
+        "unused_4",
+        "language encoding",
+        "reserved",
+        "mask header values",
+        "reserved_1",
+        "reserved_2"
+    };
+
+    static_assert(bit_count == (sizeof(FLAGS)*8));
+
+    const uint16_t bits = *((const uint16_t *)&flags);
     bool past = false;
 
-    if(flags.encrypted_file)
+    for (int i = 0; i < bit_count; i++)
     {
-        output << "encrypted file";
-        past = true;
+        if( (bits >> i) & 1 )
+        {
+            if(past)    output << " | ";
+            output << bit_names[i];
+            past = true;
+        }
     }
-    if(flags.compression_opt1)
-    {
-        if(past)    output << " | ";
-        output << "compression option 1";
-        past = true;
-    }
-    if(flags.compression_opt2)
-    {
-        if(past)    output << " | ";
-        output << "compression option 2";
-        past = true;
-    }
-    if(flags.data_descriptor)
-    {
-        if(past)    output << " | ";
-        output << "data descriptor";
-        past = true;
-    }
-    if(flags.enhanced_deflation)
-    {
-        if(past)    output << " | ";
-        output << "enhanced deflation";
-        past = true;
-    }
-    if(flags.comp_patched_data)
-    {
-        if(past)    output << " | ";
-        output << "compressed patched data";
-        past = true;
-    }
-    if(flags.strong_encryption)
-    {
-        if(past)    output << " | ";
-        output << "strong encryption";
-        past = true;
-    }
-    if(flags.language_encoding)
-    {
-        if(past)    output << " | ";
-        output << "language encoding";
-        past = true;
-    }
-    if(flags.reserved)
-    {
-        if(past)    output << " | ";
-        output << "reserved";
-        past = true;
-    }
-    if(flags.mask_header_values)
-    {
-        if(past)    output << " | ";
-        output << "mask header values";
-        past = true;
-    }
-    
+        
     return output;
 };
 
@@ -154,14 +128,6 @@ ostream &operator<<( ostream &output, const VERSION &ver)
     return output;
 }
 
-void put_n(ostream &output, const uint8_t * str, uint32_t len)
-{    
-    const uint8_t * end = str + len;
-
-    while(str < end)
-        output.put(*str++);
-}
-
 ostream &operator<<( ostream &output, const ZIP_LOCAL_FILE_HEADER &locFileHeader)
 {
     output << "Local file header:" << endl <<  hex << showbase;
@@ -177,19 +143,9 @@ ostream &operator<<( ostream &output, const ZIP_LOCAL_FILE_HEADER &locFileHeader
     output << "\t" << "file_name_len: " << locFileHeader.file_name_len << endl;
     output << "\t" << "extra_field_len: " << locFileHeader.extra_field_len << endl;
     
-    if(locFileHeader.isName())
-    {
-        output << "\t" << "file_name: ";
-        put_n(output, locFileHeader.getName(), locFileHeader.file_name_len);
-        output << endl;
-    }
-    if(locFileHeader.isExtraField())
-    {
-        output << "\t" << "extra_field: ";
-        put_n(output, locFileHeader.getExtraField(), locFileHeader.extra_field_len);
-        output << endl;
-    }
-
+    output << "\t" << "file_name: " << locFileHeader.GetName() << endl;
+    output << "\t" << "extra_field: " << locFileHeader.GetExtraField() << endl;
+    
     return output;
 }
 
@@ -214,25 +170,10 @@ ostream &operator<<( ostream &output, const ZIP_CD_FILE_HEADER &cdFileHeader)
     output << "\t" << "external_attr: " << cdFileHeader.external_attr << endl;
     output << "\t" << "offset_local_header: " << cdFileHeader.offset_local_header << " = " << dec << cdFileHeader.offset_local_header << endl;
     
-    if(cdFileHeader.isName())
-    {
-        output << "\t" << "file_name: ";
-        put_n(output, cdFileHeader.getName(), cdFileHeader.file_name_len);
-        output << endl;
-    }
-    if(cdFileHeader.isExtraField())
-    {
-        output << "\t" << "extra_field: ";
-        put_n(output, cdFileHeader.getExtraField(), cdFileHeader.extra_field_len);
-        output << endl;
-    }
-    if(cdFileHeader.isComment())
-    {
-        output << "\t" << "file_comment: ";
-        put_n(output, cdFileHeader.getComment(), cdFileHeader.file_comm_len);
-        output << endl;
-    }
-    
+    output << "\t" << "file_name: " << cdFileHeader.GetName() << endl;
+    output << "\t" << "extra_field: " << cdFileHeader.GetExtraField() << endl;
+    output << "\t" << "extra_field: " << cdFileHeader.GetComment() << endl;
+        
     return output;
 }
 
@@ -248,12 +189,7 @@ ostream &operator<<( ostream &output, const ZIP_END_OF_CD &endOfCd)
     output << "\t" << "offset: " << endOfCd.offset << " = " << dec << endOfCd.offset << endl;
     output << "\t" << "comment_len: " << endOfCd.comment_len << endl;
 
-    if(endOfCd.isComment())
-    {
-        output << "\t" << "comment_len: ";
-        put_n(output, endOfCd.getComment(), endOfCd.comment_len);
-        output << endl;
-    }
+    output << "\t" << "extra_field: " << endOfCd.GetComment() << endl;
 
     return output;
 }
