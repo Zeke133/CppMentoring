@@ -19,16 +19,19 @@ public:
     Zipper(const vector<char> &sourceFile);
     ~Zipper();
 
-    Zipper& PutZipContent(ostream &output);
+    vector<string>  GetZipContent() const;
+    uint32_t    GetFileUncompressedSize(uint32_t fileNumber) const;
+    uint32_t    GetFile(uint32_t fileNumber, vector<char>& outputFile) const;
 
 private:
 
-    const vector<char> &zipSourceFile;
-    ZIP_END_OF_CD * CentralDirectoryEnd;
+    const vector<char>  &zipArchive;
+    ZIP_END_OF_CD *     CentralDirectoryEnd;
     vector<ZIP_CD_FILE_HEADER*> ZipContent;
 
     void    InitZipEndOfCentralDirectory();
     void    FillZipContent();
+    const ZIP_LOCAL_FILE_HEADER *   GetLocalFileHeader(uint32_t fileNumber) const;
     
 };
 

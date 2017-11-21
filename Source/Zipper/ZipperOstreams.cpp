@@ -53,10 +53,27 @@ ostream &operator<<( ostream &output, const COMPRESSION &compression)
     return output;
 };
 
+inline ostream &printBitsNames( ostream &out, uint16_t bitField, uint8_t bitsCount, const char * bitsNames[])
+{
+    bool past = false;
+
+    for (int i = 0; i < bitsCount; i++)
+    {
+        if( (bitField >> i) & 1 )
+        {
+            if(past)    out << " | ";
+            out << bitsNames[i];
+            past = true;
+        }
+    }
+        
+    return out;
+}
+
 ostream &operator<<( ostream &output, const FLAGS &flags)
 {
-    const int bit_count = 16;
-    const char * bit_names[bit_count] = 
+    const int bitsCount = 16;
+    const char * bitsNames[bitsCount] = 
     {
         "encrypted file",
         "compression option_1",
@@ -76,35 +93,41 @@ ostream &operator<<( ostream &output, const FLAGS &flags)
         "reserved_2"
     };
 
-    static_assert(bit_count == (sizeof(FLAGS)*8));
+    static_assert(bitsCount == (sizeof(FLAGS)*8));
 
-    const uint16_t bits = *((const uint16_t *)&flags);
-    bool past = false;
-
-    for (int i = 0; i < bit_count; i++)
-    {
-        if( (bits >> i) & 1 )
-        {
-            if(past)    output << " | ";
-            output << bit_names[i];
-            past = true;
-        }
-    }
-        
-    return output;
+    const uint16_t bitField = *((const uint16_t *)&flags);
+    
+    return printBitsNames( output, bitField, bitsCount, bitsNames);
 };
 
 ostream &operator<<( ostream &output, const INT_ATTR &attr)
 {
-    bool past = false;
+    const int bitsCount = 16;
+    const char * bitsNames[bitsCount] = 
+    {
+        "apparent ASCII/text file",
+        "reserved",
+        "control field records precede logical records",
+        "unused_1",
+        "unused_2",
+        "unused_3",
+        "unused_4",
+        "unused_5",
+        "unused_6",
+        "unused_7",
+        "unused_8",
+        "unused_9",
+        "unused_10",
+        "unused_11",
+        "unused_12",
+        "unused_13"
+    };
 
-    if(attr.ASCII_text)             output << "apparent ASCII/text file";
-    if(past)    cout << " | ";
-    if(attr.reserved)               output << "reserved";
-    if(past)    cout << " | ";
-    if(attr.control)                output << "control field records precede logical records";
+    static_assert(bitsCount == (sizeof(FLAGS)*8));
 
-    return output;
+    const uint16_t bitField = *((const uint16_t *)&attr);
+
+    return printBitsNames( output, bitField, bitsCount, bitsNames);
 };
 
 ostream &operator<<( ostream &output, const MS_DOS_TIME &time)

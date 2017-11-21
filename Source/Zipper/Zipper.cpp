@@ -5,7 +5,7 @@
 using namespace std;
 
 Zipper::Zipper(const vector<char> &file) :
-        zipSourceFile(file)
+        zipArchive(file)
 {   
     try
     {
@@ -23,24 +23,53 @@ Zipper::~Zipper()
     ZipContent.clear();
 }
 
-Zipper& Zipper::PutZipContent(ostream &output)
+vector<string> Zipper::GetZipContent() const
 {
-    output << "Files:" << endl;
+    vector<string> filesNames;
+    filesNames.reserve(ZipContent.size());
+
     for(auto file : ZipContent)
     {
-        cout << "\n\t" << file->GetName();
+        auto view = file->GetName();      
+        filesNames.push_back(string(view.data(), view.size()));
     }
 
-    return *this;
+    return filesNames;
+}
+
+uint32_t Zipper::GetFileUncompressedSize(uint32_t fileNumber) const
+{
+    return ZipContent[fileNumber]->uncompressed_size;
+}
+
+uint32_t Zipper::GetFile(uint32_t fileNumber, vector<char>& outputFile) const
+{
+    long unsigned int outputFileSize = outputFile.size();
+
+    const ZIP_LOCAL_FILE_HEADER * localFileHeader = GetLocalFileHeader(fileNumber);
+
+    if(localFileHeader->compression != COMPRESSION::deflated)
+        throw exception(/*"Error decompressing file from archive: unsupported compression method!"*/);
+
+    // TINF100
+    // tinf_init();
+    // cout << "tinf_uncompress = " << (res = tinf_uncompress(decompressedFile.data(), &out_len, inDataPtr, in_len)) << endl;
+
+    long unsigned int compressedSize = localFileHeader->compressed_size;
+    uint32_t res = puff((unsigned char*)outputFile.data(), &outputFileSize, (uint8_t *)localFileHeader + localFileHeader->getRealSize(), &compressedSize);
+    if(res != 0)
+        throw exception(/*"Error decompressing file from archive!"*/);
+    
+    return outputFileSize;
 }
 
 void Zipper::InitZipEndOfCentralDirectory()
 {
-    auto iter = zipSourceFile.end();
+    auto iter = zipArchive.end();
 
     while(!(*iter == 0x50 && *(iter+1) == 0x4b && *(iter+2) == 0x05 && *(iter+3) == 0x06))
     {
-        if(iter == zipSourceFile.begin())
+        if(iter == zipArchive.begin())
         {
             throw std::exception(/*"Error in ZIP file endOfCentralDirectory record!"*/);
         }
@@ -52,7 +81,7 @@ void Zipper::InitZipEndOfCentralDirectory()
 
 void Zipper::FillZipContent()
 {
-    ZIP_CD_FILE_HEADER * ptr = (ZIP_CD_FILE_HEADER *)(&(*(zipSourceFile.begin() + CentralDirectoryEnd->offset)));
+    ZIP_CD_FILE_HEADER * ptr = (ZIP_CD_FILE_HEADER *)(&(*(zipArchive.begin() + CentralDirectoryEnd->offset)));
 
     for (uint16_t i = 0; i < CentralDirectoryEnd->total_entries; i++)
     {
@@ -66,6 +95,11 @@ void Zipper::FillZipContent()
         // ptr to next struct
         ptr = (ZIP_CD_FILE_HEADER *)((uint8_t *)ptr + ptr->getRealSize());
     }
+}
+
+const ZIP_LOCAL_FILE_HEADER * Zipper::GetLocalFileHeader(uint32_t fileNumber) const
+{
+    return (ZIP_LOCAL_FILE_HEADER * )(&(*(zipArchive.begin())) + ZipContent[fileNumber]->offset_local_header);
 }
 
 
