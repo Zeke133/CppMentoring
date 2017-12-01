@@ -4,12 +4,12 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <exception>
 
 #include "ZipperTypes.h"
 #include "ZipperOstreams.h"
-#include "..\Tinf100\tinf.h"
-#include "..\Puff\puff.h"
-
+//#include "Tinf100\tinf.h"
+#include "Puff\puff.h"
 
 class Zipper
 {

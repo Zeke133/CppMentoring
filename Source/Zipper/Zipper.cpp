@@ -1,7 +1,5 @@
 #include "Zipper.h"
 
-#include <exception>
-
 using namespace std;
 
 Zipper::Zipper(const vector<char> &file) :

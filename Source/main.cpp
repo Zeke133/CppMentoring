@@ -5,6 +5,7 @@
 #include <exception>
 
 #include "Zipper\Zipper.h"
+#include "XML\Xml.h"
 
 using namespace std;
 
@@ -62,7 +63,9 @@ int main(void)
 
         uint32_t ret = zip.GetFile(i, uncompressedFile);
         cout << ret << " bytes uncompressed" << endl;
-        cout << "Uncompressed file:\n" << uncompressedFile.data() << endl;
+        //cout << "Uncompressed file:\n" << uncompressedFile.data() << endl;
+
+        Xml tags(uncompressedFile);
     }
     catch(const exception& ex)
     {
