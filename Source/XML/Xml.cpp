@@ -5,106 +5,64 @@ struct Node
 {
     XmlEntity * content;
     Node * parent;
-    vector<Node *> children;
+    list<Node> children;
 };
-
-string_view GetTag(vector<char>::const_iterator &cit, vector<char>::const_iterator cend)
-{
-auto begin = cit;
-
-    while (cit != cend && *cit != '>')
-    {
-        cit += 1;
-    }
-    cit += 1;
-    uint32_t length = cit - begin;
-    string_view tagContent(&(*begin), length);
-    return tagContent;
-}
-
-string_view GetData(vector<char>::const_iterator &cit, vector<char>::const_iterator cend)
-{
-auto begin = cit;
-
-    while (cit != cend && *cit != '<')
-    {
-        cit += 1;
-    }
-    string_view data(&(*begin), cit - begin);
-    return data;
-}
 
 void BuildTree(const vector<char> &xmlFile)
 {
-    auto cbegin = xmlFile.cbegin();
-    auto cend = xmlFile.cend();
-
-    vector<string_view> strings;
-
-    auto curr = cbegin;
-    while(curr != cend)
+    auto begin = xmlFile.cbegin();
+    auto end = xmlFile.cend();
+    end --;
+    
+    // truncate begin and end of document
+    while (begin < end && (*begin == '\n' || *begin == '\r' || *begin == '\t')) begin ++;
+    while (begin <= end && (*end == '\n' || *end == '\r' || *end == '\t')) end --;
+    end ++;
+    
+    // take entities
+    list<XmlEntity> entities;
+    while (begin < end)
     {
-        // Trash
-        if(*curr == '\n' || *curr == '\r' || *curr == '\t') curr += 1;
-        // Tag
-        else if(*curr == '<')
-        {
-            string_view tag = GetTag(curr, cend);
-            strings.push_back(tag);            
-        }
-        // Data
-        else
-        {
-            string_view body = GetData(curr, cend);
-            strings.push_back(body);
-        }
+        entities.push_back(XmlEntity::TakeXmlEntity(begin, end));
     }
 
-    cout << "Xml tags are:" << endl;
-    for(auto str : strings)
+    cout << "Xml contants are:" << endl;
+    for(auto entity : entities)
     {
-        cout << str << endl;
+        cout << entity.GetContent() << endl;
     }
 
     Node tree;
     tree.parent = NULL; //root
     Node * currNode = &tree;
-    for(auto str : strings)
+    for(auto entity : entities)
     {
-        XmlEntity entity(str);
-        auto entityType = entity.GetEntityType();
-        switch(entityType)
+        auto entityContent = entity.GetContent();
+
+        switch(entity.GetEntityType())
         {
             case XmlEntityType::CharData:
             {
-                Node * child = new Node {new XmlData(str), currNode};
-                currNode->children.push_back(child);
+                currNode->children.push_back(Node {new XmlData(entity), currNode});
                 break;
             }
             case XmlEntityType::Tag:
             {
-                XmlTag tag(str);
-                auto tagType = tag.GetTagType();
-                switch(tagType)
+                switch(XmlTag::GetTagType(entityContent))
                 {
                     case XmlTagType::Element:
                     {
-                        XmlElement element(str);
-                        auto elementType = element.GetElementType();
-                        switch(elementType)
+                        switch(XmlElement::GetElementType(entityContent))
                         {
                             case XmlElementType::Start:
                             {
-                                Node * child = new Node {new XmlElement(str), currNode};
-                                currNode->children.push_back(child);
-                                currNode = child;
+                                currNode->children.push_back(Node {new XmlElement(entity), currNode});
+                                currNode = &(currNode->children.back());
                                 break;
                             }
                             case XmlElementType::End:
                             {
-                                auto end = XmlElement(str);
-                                XmlElement * start = static_cast<XmlElement *>(currNode->content);
-                                if ( end.GetElementName() == (*start).GetElementName() )
+                                if ( XmlElement::GetElementName(entityContent) == static_cast<XmlElement *>(currNode->content)->GetElementName() )
                                 {
                                     currNode = currNode->parent;
                                 }
@@ -113,8 +71,7 @@ void BuildTree(const vector<char> &xmlFile)
                             }
                             case XmlElementType::Empty:
                             {
-                                Node * child = new Node {new XmlElement(str), currNode};
-                                currNode->children.push_back(child);
+                                currNode->children.push_back(Node {new XmlElement(entity), currNode});
                                 break;
                             }
                             default: throw exception();
@@ -123,8 +80,7 @@ void BuildTree(const vector<char> &xmlFile)
                     }
                     case XmlTagType::Definition:
                     {
-                        Node * child = new Node {new XmlDefinition(str), currNode};
-                        currNode->children.push_back(child);
+                        currNode->children.push_back(Node {new XmlDefinition(entity), currNode});
                         break;
                     }
                     default: throw exception();

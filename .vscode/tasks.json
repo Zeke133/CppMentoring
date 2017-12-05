@@ -13,13 +13,20 @@
             "command": "g++",
             "args": [
                 "-g",
+                // Zipper
                 //"${workspaceRoot}/Source/Zipper/Tinf100/crc32.c",
                 //"${workspaceRoot}/Source/Zipper/Tinf100/tinflate.c",
                 "${workspaceRoot}/Source/Zipper/Puff/puff.c",
                 "${workspaceRoot}/Source/Zipper/ZipperOstreams.cpp",
                 "${workspaceRoot}/Source/Zipper/Zipper.cpp",
+                // Xml
+                "${workspaceRoot}/Source/XML/XmlEntities/XmlTags/XmlElement.cpp",
+                "${workspaceRoot}/Source/XML/XmlEntities/XmlTag.cpp",
+                "${workspaceRoot}/Source/XML/XmlEntity.cpp",
                 "${workspaceRoot}/Source/XML/Xml.cpp",
+                // Main
                 "${workspaceRoot}/Source/main.cpp",
+                // Flags
                 "-Wall",
                 "-std=c++17"
             ],

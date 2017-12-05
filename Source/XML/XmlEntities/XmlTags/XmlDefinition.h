@@ -12,9 +12,8 @@ namespace XML
 
     public:
 
-        XmlDefinition(string_view str) : XmlTag(str)
-        {
-        };
+        XmlDefinition(string_view str) : XmlTag(str) {};
+        XmlDefinition(const XmlEntity& entity) : XmlTag(entity) {};
         
     private:
 

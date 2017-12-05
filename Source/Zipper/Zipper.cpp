@@ -69,7 +69,7 @@ void Zipper::InitZipEndOfCentralDirectory()
     {
         if(iter == zipArchive.begin())
         {
-            throw std::exception(/*"Error in ZIP file endOfCentralDirectory record!"*/);
+            throw exception(/*"Error in ZIP file endOfCentralDirectory record!"*/);
         }
         iter--;
     }
@@ -85,7 +85,7 @@ void Zipper::FillZipContent()
     {
         if(ptr->signature != ZIP_CD_FILE_HEADER_SIGNATURE)
         {
-            throw std::exception(/*"Error in ZIP file CentralDirectory record!"*/);
+            throw exception(/*"Error in ZIP file CentralDirectory record!"*/);
         }
 
         ZipContent.push_back(ptr);

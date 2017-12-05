@@ -2,6 +2,7 @@
 #define XML_TAG_H
 
 #include <string_view>
+#include "..\XmlEntity.h"
 
 using namespace std;
 
@@ -23,23 +24,12 @@ namespace XML
 
     public:
 
-        XmlTag(string_view str) : XmlEntity(str)
-        {
-            // str.starts_with("?xml")
-            if ( str.compare(1, 3, "!--") == 0 ) tagType = XmlTagType::Comment;
-            else
-            if ( str.compare(1, 5, "?xml ") == 0 ) tagType = XmlTagType::Definition;
-            else
-            if ( str.compare(1, 8, "!DOCTYPE") == 0 ) tagType = XmlTagType::DocType;
-            else
-            if ( str.compare(1, 4, "?xml") == 0 ) tagType = XmlTagType::ProcInstr;
-            else tagType = XmlTagType::Element;
-        };
+        XmlTag(string_view str);
+        XmlTag(const XmlEntity& entity);
 
-        XmlTagType GetTagType() const
-        {
-            return tagType;
-        };
+        XmlTagType GetTagType() const;
+
+        static XmlTagType GetTagType(string_view str);
         
     private:
 

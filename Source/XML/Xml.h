@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string_view>
 #include <vector>
+#include <list>
 #include <exception>
 
 #include "XmlEntity.h"
@@ -20,7 +21,6 @@ class Xml
 {
 
 public:
-
     Xml(const vector<char> &xmlFile);
     ~Xml();
 

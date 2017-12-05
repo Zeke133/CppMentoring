@@ -2,6 +2,7 @@
 #define XML_ELEMENT_H
 
 #include <string_view>
+#include "../XmlTag.h"
 
 using namespace std;
 
@@ -19,27 +20,14 @@ namespace XML
 
     public:
 
-        XmlElement(string_view str) : XmlTag(str)
-        {
-            if ( str[1] == '/')  elementType = XmlElementType::End;
-            else
-            if ( *(str.end() - 2) == '/' ) elementType = XmlElementType::Empty;
-            else elementType = XmlElementType::Start;
+        XmlElement(string_view str);
+        XmlElement(const XmlEntity& entity);
 
-            auto start = str.find_first_not_of("</");
-            auto end = str.find_first_of(" />", start);
-            elementName = str.substr(start, end-start);
-        };
+        XmlElementType GetElementType() const;
+        string_view GetElementName() const;
 
-        XmlElementType GetElementType() const
-        {
-            return elementType;
-        };
-
-        string_view GetElementName() const
-        {
-            return elementName;
-        };
+        static string_view GetElementName(string_view str);
+        static XmlElementType GetElementType(string_view str);
         
     private:
 

@@ -3,6 +3,7 @@
 
 #include <string_view>
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -18,25 +19,16 @@ namespace XML
     {
 
     public:
+        XmlEntity(string_view str);
+        XmlEntity(const XmlEntity& entity);
 
-        XmlEntity(string_view str)
-        {
-            content = str;
-            entityType = str.front() == '<' ? XmlEntityType::Tag : XmlEntityType::CharData;
-        };        
+        string_view GetContent() const;
+        XmlEntityType GetEntityType() const;
 
-        string_view GetContent() const
-        {
-            return string_view(content);
-        };
-
-        XmlEntityType GetEntityType() const
-        {
-            return entityType;
-        };
+        static XmlEntityType GetEntityType(string_view str);
+        static XmlEntity TakeXmlEntity(vector<char>::const_iterator &it, vector<char>::const_iterator end);
 
     private:
-
         string content;
         XmlEntityType entityType;
 
