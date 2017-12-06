@@ -1,14 +1,25 @@
 
 #include "Xml.h"
 
-struct Node
-{
-    XmlEntity * content;
-    Node * parent;
-    list<Node> children;
-};
 
-void BuildTree(const vector<char> &xmlFile)
+Xml::Xml(const vector<char>& xmlFile)
+{    
+    try
+    {
+        BuildTree(xmlFile);
+    } 
+    catch(exception)
+    {
+        throw exception();
+    }
+}
+
+Xml::~Xml()
+{
+    ClearTree();
+}
+
+void Xml::BuildTree(const vector<char>& xmlFile)
 {
     auto begin = xmlFile.cbegin();
     auto end = xmlFile.cend();
@@ -26,24 +37,19 @@ void BuildTree(const vector<char> &xmlFile)
         entities.push_back(XmlEntity::TakeXmlEntity(begin, end));
     }
 
-    cout << "Xml contants are:" << endl;
-    for(auto entity : entities)
-    {
-        cout << entity.GetContent() << endl;
-    }
-
-    Node tree;
+    tree.content = NULL;
     tree.parent = NULL; //root
     Node * currNode = &tree;
-    for(auto entity : entities)
-    {
-        auto entityContent = entity.GetContent();
 
-        switch(entity.GetEntityType())
+    for(auto e : entities)
+    {
+        auto entityContent = e.GetContent();
+
+        switch(e.GetEntityType())
         {
             case XmlEntityType::CharData:
             {
-                currNode->children.push_back(Node {new XmlData(entity), currNode});
+                currNode->children.push_back(Node {new XmlData(e), currNode});
                 break;
             }
             case XmlEntityType::Tag:
@@ -56,7 +62,7 @@ void BuildTree(const vector<char> &xmlFile)
                         {
                             case XmlElementType::Start:
                             {
-                                currNode->children.push_back(Node {new XmlElement(entity), currNode});
+                                currNode->children.push_back(Node {new XmlElement(e), currNode});
                                 currNode = &(currNode->children.back());
                                 break;
                             }
@@ -71,7 +77,7 @@ void BuildTree(const vector<char> &xmlFile)
                             }
                             case XmlElementType::Empty:
                             {
-                                currNode->children.push_back(Node {new XmlElement(entity), currNode});
+                                currNode->children.push_back(Node {new XmlElement(e), currNode});
                                 break;
                             }
                             default: throw exception();
@@ -80,7 +86,7 @@ void BuildTree(const vector<char> &xmlFile)
                     }
                     case XmlTagType::Definition:
                     {
-                        currNode->children.push_back(Node {new XmlDefinition(entity), currNode});
+                        currNode->children.push_back(Node {new XmlDefinition(e), currNode});
                         break;
                     }
                     default: throw exception();
@@ -88,28 +94,42 @@ void BuildTree(const vector<char> &xmlFile)
                 break;
             }
             default: throw exception();
-        }        
-    }
-
-    cout << "tree build" << endl;
+        }
+    }    
 }
 
-Xml::Xml(const vector<char> &xmlFile)
-{    
-    try
-    {
-        BuildTree(xmlFile);
-    } 
-    catch(exception)
-    {
-        throw exception();
-    }
-}
-
-Xml::~Xml()
+void Xml::DeleteNode(Node& node)
 {
-    cout << "XML close" << endl;
+    for(auto child : node.children)
+        DeleteNode(child);
+
+    node.children.clear();
+    
+    delete node.content;
 }
 
+void Xml::ClearTree()
+{
+    DeleteNode(tree);
+}
+
+void Xml::PrintNode(const Node& node, int tabs) const
+{
+    for(int t = 0; t < tabs; t++)
+        cout << "\t";
+
+    if (node.parent == NULL)
+        cout << "<ROOT>" << endl;
+    else
+        cout << node.content->GetContent() << endl;
+
+    for(auto child : node.children)
+        PrintNode(child, tabs + 1);
+}
+
+void Xml::PrintTree() const
+{
+    PrintNode(tree, 0);
+}
 
 

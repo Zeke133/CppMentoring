@@ -23,8 +23,21 @@ class Xml
 public:
     Xml(const vector<char> &xmlFile);
     ~Xml();
+    void PrintTree() const;
+    void ClearTree();
 
-private:       
+private:
+    struct Node
+    {
+        XmlEntity * content;
+        Node * parent;
+        list<Node> children;
+    } tree;
+
+    void BuildTree(const vector<char> &xmlFile);
+    void DeleteTree();
+    void PrintNode(const Node& node, int tabs) const;
+    void DeleteNode(Node& node);
     
 };
 

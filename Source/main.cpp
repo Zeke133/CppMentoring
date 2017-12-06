@@ -65,7 +65,13 @@ int main(void)
         cout << ret << " bytes uncompressed" << endl;
         //cout << "Uncompressed file:\n" << uncompressedFile.data() << endl;
 
-        Xml tags(uncompressedFile);
+        Xml xml(uncompressedFile);
+        cout << "XML tree:" << endl;
+        xml.PrintTree();
+        cout << "XML cleared" << endl;
+        xml.ClearTree();
+        cout << "XML tree:" << endl;
+        xml.PrintTree();        
     }
     catch(const exception& ex)
     {

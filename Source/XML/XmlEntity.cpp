@@ -39,7 +39,7 @@ XmlEntity XmlEntity::TakeXmlEntity(vector<char>::const_iterator &it, vector<char
         // Trash
         if (*it == '\n' || *it == '\r' || *it == '\t')
         {
-            it++;
+            begin = ++it;
             continue;
         }
         // Tag
