@@ -2,6 +2,7 @@
 #define XML_DATA_H
 
 #include <string_view>
+#include "..\XmlEntity.h"
 
 using namespace std;
 
@@ -14,6 +15,9 @@ namespace XML
     
         XmlData(string_view str) : XmlEntity(str) {};
         XmlData(const XmlEntity& entity) : XmlEntity(entity) {};
+        virtual ~XmlData() {};
+
+        virtual string ToString() const;
 
     private:
 

@@ -1,6 +1,7 @@
 #ifndef XML_TAG_H
 #define XML_TAG_H
 
+#include <iostream>
 #include <string_view>
 #include "..\XmlEntity.h"
 
@@ -26,8 +27,11 @@ namespace XML
 
         XmlTag(string_view str);
         XmlTag(const XmlEntity& entity);
+        virtual ~XmlTag() {};
 
         XmlTagType GetTagType() const;
+        virtual void PrintContent(int tabs) const;
+        virtual string ToString() const {return string();};
 
         static XmlTagType GetTagType(string_view str);
         

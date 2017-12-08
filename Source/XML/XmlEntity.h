@@ -21,9 +21,11 @@ namespace XML
     public:
         XmlEntity(string_view str);
         XmlEntity(const XmlEntity& entity);
+        virtual ~XmlEntity() {};
 
         string_view GetContent() const;
         XmlEntityType GetEntityType() const;
+        virtual string ToString() const {return string();};
 
         static XmlEntityType GetEntityType(string_view str);
         static XmlEntity TakeXmlEntity(vector<char>::const_iterator &it, vector<char>::const_iterator end);

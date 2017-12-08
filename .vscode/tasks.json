@@ -20,8 +20,10 @@
                 "${workspaceRoot}/Source/Zipper/ZipperOstreams.cpp",
                 "${workspaceRoot}/Source/Zipper/Zipper.cpp",
                 // Xml
+                "${workspaceRoot}/Source/XML/XmlEntities/XmlTags/XmlDefinition.cpp",
                 "${workspaceRoot}/Source/XML/XmlEntities/XmlTags/XmlElement.cpp",
                 "${workspaceRoot}/Source/XML/XmlEntities/XmlTag.cpp",
+                "${workspaceRoot}/Source/XML/XmlEntities/XmlData.cpp",
                 "${workspaceRoot}/Source/XML/XmlEntity.cpp",
                 "${workspaceRoot}/Source/XML/Xml.cpp",
                 // Main

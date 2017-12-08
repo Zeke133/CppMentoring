@@ -31,51 +31,39 @@ int main(void)
     cout << "File size: " << len << endl;   
     
     vector<char> file((istreambuf_iterator<char> (fileStream)), istreambuf_iterator<char> ());
-
-    cout << file.size() << " bytes was cached" << endl;
     
-    if (fileStream)
-        cout << "All data read successfully.\n";
-    else
+    if (!fileStream)
         cerr << "Error: only " << fileStream.gcount() << " could be read\n";
+
     fileStream.close();
     
     try
     {
         Zipper zip(file);
         auto filesNames = zip.GetZipContent();
-        cout << "ZipContent:";
-        for(uint32_t i = 0; i < filesNames.size(); i++)
+        cout << "ZipContent:" << endl;
+        for(auto name : filesNames)
         {
-            cout << "\n\t" << i << ". " << filesNames[i];
+            cout << name << endl;
         }
         cout << endl;
+        
+        cout << "File \"word/document.xml\" uncompressed size is " << zip.GetFileUncompressedSize("word/document.xml") << " bytes" << endl;
 
-        uint16_t i;
-        cout << "Enter file number to look more info or other key to Exit:";
-        cin >> i;
-        if(i >= filesNames.size())
-            cout << "Wrong number!" << endl;
+        auto unzipedFile = zip.GetFile("word/document.xml");
+        cout << endl;
 
-        uint32_t uncompressedFileSize = zip.GetFileUncompressedSize(i);
-        cout << "File uncompressed size is " << uncompressedFileSize << " bytes" << endl;
-        vector<char> uncompressedFile(uncompressedFileSize);
-
-        uint32_t ret = zip.GetFile(i, uncompressedFile);
-        cout << ret << " bytes uncompressed" << endl;
-        //cout << "Uncompressed file:\n" << uncompressedFile.data() << endl;
-
-        Xml xml(uncompressedFile);
+        Xml xml(unzipedFile);
         cout << "XML tree:" << endl;
         xml.PrintTree();
-        cout << "XML cleared" << endl;
-        xml.ClearTree();
-        cout << "XML tree:" << endl;
-        xml.PrintTree();        
+
+        cout << "XML as text:" << endl;
+        cout << xml.ToString() << endl;
+
     }
     catch(const exception& ex)
     {
-        cerr << "Zipper() error happen - " << ex.what() << endl;
+        cerr << "Error happen - " << ex.what() << endl;
     }
     
     return 0; 

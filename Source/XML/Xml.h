@@ -3,8 +3,7 @@
 
 #include <iostream>
 #include <string_view>
-#include <vector>
-#include <list>
+#include <queue>
 #include <exception>
 
 #include "XmlEntity.h"
@@ -23,21 +22,15 @@ class Xml
 public:
     Xml(const vector<char> &xmlFile);
     ~Xml();
+
     void PrintTree() const;
-    void ClearTree();
+    string ToString() const;
 
 private:
-    struct Node
-    {
-        XmlEntity * content;
-        Node * parent;
-        list<Node> children;
-    } tree;
+    XmlDefinition * definition;
+    XmlElement * xmlRoot;
 
     void BuildTree(const vector<char> &xmlFile);
-    void DeleteTree();
-    void PrintNode(const Node& node, int tabs) const;
-    void DeleteNode(Node& node);
     
 };
 

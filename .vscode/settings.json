@@ -33,6 +33,7 @@
         "cstddef": "cpp",
         "xstddef": "cpp",
         "xtr1common": "cpp",
-        "xmemory0": "cpp"
+        "xmemory0": "cpp",
+        "queue": "cpp"
     }
 }

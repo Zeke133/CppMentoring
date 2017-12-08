@@ -7,23 +7,23 @@ XmlEntity::XmlEntity(string_view str)
 {
     content = str;
     entityType = GetEntityType(str);
-};
+}
 
 XmlEntity::XmlEntity(const XmlEntity& entity)
 {
     content = entity.content;
     entityType = entity.entityType;
-};
+}
 
 string_view XmlEntity::GetContent() const
 {
     return string_view(content);
-};
+}
 
 XmlEntityType XmlEntity::GetEntityType() const
 {
     return entityType;
-};
+}
 
 XmlEntityType XmlEntity::GetEntityType(string_view str)
 {

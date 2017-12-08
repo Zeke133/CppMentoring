@@ -16,7 +16,8 @@ Xml::Xml(const vector<char>& xmlFile)
 
 Xml::~Xml()
 {
-    ClearTree();
+    if (definition != NULL) delete definition;
+    if (xmlRoot != NULL) delete xmlRoot;
 }
 
 void Xml::BuildTree(const vector<char>& xmlFile)
@@ -30,106 +31,56 @@ void Xml::BuildTree(const vector<char>& xmlFile)
     while (begin <= end && (*end == '\n' || *end == '\r' || *end == '\t')) end --;
     end ++;
     
-    // take entities
-    list<XmlEntity> entities;
+    // take entities from text
+    queue<XmlEntity> entities;
     while (begin < end)
     {
-        entities.push_back(XmlEntity::TakeXmlEntity(begin, end));
+        // Take entity from text
+        auto entity = XmlEntity::TakeXmlEntity(begin, end);
+
+        // If document definition - filling property
+        if (entity.GetEntityType() == XmlEntityType::Tag && XmlTag::GetTagType(entity.GetContent()) == XmlTagType::Definition)
+        {
+            if (definition == NULL)
+                definition = new XmlDefinition(entity);
+            else
+                throw exception(/*repeat definition, only one definition allowed*/);
+        }
+        // Add entity to queue
+        else
+        {
+            entities.push(entity); 
+        }
     }
 
-    tree.content = NULL;
-    tree.parent = NULL; //root
-    Node * currNode = &tree;
-
-    for(auto e : entities)
+    // give queue to RootElement constructor which will build tree xml elements using recursion
+    try
     {
-        auto entityContent = e.GetContent();
-
-        switch(e.GetEntityType())
-        {
-            case XmlEntityType::CharData:
-            {
-                currNode->children.push_back(Node {new XmlData(e), currNode});
-                break;
-            }
-            case XmlEntityType::Tag:
-            {
-                switch(XmlTag::GetTagType(entityContent))
-                {
-                    case XmlTagType::Element:
-                    {
-                        switch(XmlElement::GetElementType(entityContent))
-                        {
-                            case XmlElementType::Start:
-                            {
-                                currNode->children.push_back(Node {new XmlElement(e), currNode});
-                                currNode = &(currNode->children.back());
-                                break;
-                            }
-                            case XmlElementType::End:
-                            {
-                                if ( XmlElement::GetElementName(entityContent) == static_cast<XmlElement *>(currNode->content)->GetElementName() )
-                                {
-                                    currNode = currNode->parent;
-                                }
-                                else throw exception();
-                                break;
-                            }
-                            case XmlElementType::Empty:
-                            {
-                                currNode->children.push_back(Node {new XmlElement(e), currNode});
-                                break;
-                            }
-                            default: throw exception();
-                        }
-                        break;
-                    }
-                    case XmlTagType::Definition:
-                    {
-                        currNode->children.push_back(Node {new XmlDefinition(e), currNode});
-                        break;
-                    }
-                    default: throw exception();
-                }
-                break;
-            }
-            default: throw exception();
-        }
-    }    
-}
-
-void Xml::DeleteNode(Node& node)
-{
-    for(auto child : node.children)
-        DeleteNode(child);
-
-    node.children.clear();
-    
-    delete node.content;
-}
-
-void Xml::ClearTree()
-{
-    DeleteNode(tree);
-}
-
-void Xml::PrintNode(const Node& node, int tabs) const
-{
-    for(int t = 0; t < tabs; t++)
-        cout << "\t";
-
-    if (node.parent == NULL)
-        cout << "<ROOT>" << endl;
-    else
-        cout << node.content->GetContent() << endl;
-
-    for(auto child : node.children)
-        PrintNode(child, tabs + 1);
+        // creating Root element
+        xmlRoot = new XmlElement(entities.front());
+        entities.pop();
+        // creating all children elements
+        xmlRoot->Fill(entities);
+    }
+    catch(exception)
+    {
+        throw exception(/* Error creating Root*/);
+    }
 }
 
 void Xml::PrintTree() const
 {
-    PrintNode(tree, 0);
+    xmlRoot->PrintContent(0);
 }
+
+string Xml::ToString() const
+{
+    return xmlRoot->ToString();
+}
+
+
+
+
+
 
 

@@ -35,30 +35,41 @@ vector<string> Zipper::GetZipContent() const
     return filesNames;
 }
 
-uint32_t Zipper::GetFileUncompressedSize(uint32_t fileNumber) const
+uint32_t Zipper::GetFileUncompressedSize(const string_view fileName) const
 {
-    return ZipContent[fileNumber]->uncompressed_size;
+    const auto localFileHeader = GetLocalFileHeader(fileName);
+
+    if (localFileHeader == NULL)
+        throw exception(/*"No requested file name in archive!"*/);
+
+    return localFileHeader->uncompressed_size;
 }
 
-uint32_t Zipper::GetFile(uint32_t fileNumber, vector<char>& outputFile) const
+vector<char> Zipper::GetFile(const string_view fileName) const
 {
-    long unsigned int outputFileSize = outputFile.size();
+    const auto localFileHeader = GetLocalFileHeader(fileName);
 
-    const ZIP_LOCAL_FILE_HEADER * localFileHeader = GetLocalFileHeader(fileNumber);
+    if(localFileHeader == NULL)
+        throw exception(/*"No requested file name in archive!"*/);
 
     if(localFileHeader->compression != COMPRESSION::deflated)
         throw exception(/*"Error decompressing file from archive: unsupported compression method!"*/);
 
     // TINF100
     // tinf_init();
-    // cout << "tinf_uncompress = " << (res = tinf_uncompress(decompressedFile.data(), &out_len, inDataPtr, in_len)) << endl;
+    // res = tinf_uncompress(decompressedFile.data(), &out_len, inDataPtr, in_len);
 
-    long unsigned int compressedSize = localFileHeader->compressed_size;
-    uint32_t res = puff((unsigned char*)outputFile.data(), &outputFileSize, (uint8_t *)localFileHeader + localFileHeader->getRealSize(), &compressedSize);
+    vector<char> outputFile(localFileHeader->uncompressed_size);
+    auto outputPtr = (uint8_t *)(outputFile.data());
+    unsigned long outputSize = outputFile.size();
+    auto sourcePtr = (uint8_t *)localFileHeader + localFileHeader->getRealSize();
+    unsigned long compressedSize = localFileHeader->compressed_size;
+
+    auto res = puff(outputPtr, &outputSize, sourcePtr, &compressedSize);
     if(res != 0)
         throw exception(/*"Error decompressing file from archive!"*/);
     
-    return outputFileSize;
+    return outputFile;
 }
 
 void Zipper::InitZipEndOfCentralDirectory()
@@ -79,7 +90,7 @@ void Zipper::InitZipEndOfCentralDirectory()
 
 void Zipper::FillZipContent()
 {
-    ZIP_CD_FILE_HEADER * ptr = (ZIP_CD_FILE_HEADER *)(&(*(zipArchive.begin() + CentralDirectoryEnd->offset)));
+    auto ptr = (ZIP_CD_FILE_HEADER *)(&(*(zipArchive.begin() + CentralDirectoryEnd->offset)));
 
     for (uint16_t i = 0; i < CentralDirectoryEnd->total_entries; i++)
     {
@@ -95,10 +106,16 @@ void Zipper::FillZipContent()
     }
 }
 
-const ZIP_LOCAL_FILE_HEADER * Zipper::GetLocalFileHeader(uint32_t fileNumber) const
+const ZIP_LOCAL_FILE_HEADER * Zipper::GetLocalFileHeader(const string_view fileName) const
 {
-    return (ZIP_LOCAL_FILE_HEADER * )(&(*(zipArchive.begin())) + ZipContent[fileNumber]->offset_local_header);
+    for(auto file : ZipContent)
+    {
+        if ( file->GetName() == fileName ) return (ZIP_LOCAL_FILE_HEADER * )(&(*(zipArchive.begin())) + file->offset_local_header);
+    }
+    return NULL;
 }
+
+
 
 
 
