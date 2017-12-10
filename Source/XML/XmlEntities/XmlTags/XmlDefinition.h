@@ -17,7 +17,6 @@ namespace XML
         XmlDefinition(const XmlEntity& entity) : XmlTag(entity) {};
         virtual ~XmlDefinition() {};
 
-        virtual string ToString() const {return string();};
         virtual void PrintContent(int tabs) const;
         
     private:

@@ -23,9 +23,8 @@ namespace XML
         XmlEntity(const XmlEntity& entity);
         virtual ~XmlEntity() {};
 
-        string_view GetContent() const;
         XmlEntityType GetEntityType() const;
-        virtual string ToString() const {return string();};
+        string_view ToString() const;
 
         static XmlEntityType GetEntityType(string_view str);
         static XmlEntity TakeXmlEntity(vector<char>::const_iterator &it, vector<char>::const_iterator end);

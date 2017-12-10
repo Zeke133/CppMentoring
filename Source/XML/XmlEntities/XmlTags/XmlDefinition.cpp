@@ -5,5 +5,5 @@ using namespace XML;
 
 void XmlDefinition::PrintContent(int tabs) const
 {
-    cout << GetContent() << endl;
+    cout << ToString() << endl;
 };

@@ -30,8 +30,8 @@ namespace XML
         virtual ~XmlTag() {};
 
         XmlTagType GetTagType() const;
-        virtual void PrintContent(int tabs) const;
-        virtual string ToString() const {return string();};
+
+        virtual void PrintContent(int tabs) const = 0;
 
         static XmlTagType GetTagType(string_view str);
         

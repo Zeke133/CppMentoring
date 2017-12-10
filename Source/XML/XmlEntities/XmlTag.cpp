@@ -10,17 +10,12 @@ XmlTag::XmlTag(string_view str) : XmlEntity(str)
 
 XmlTag::XmlTag(const XmlEntity& entity) : XmlEntity(entity)
 {
-    tagType = GetTagType(GetContent());
+    tagType = GetTagType(entity.ToString());
 }
 
 XmlTagType XmlTag::GetTagType() const
 {
     return tagType;
-}
-
-void XmlTag::PrintContent(int tabs) const
-{
-    cout << GetContent() << endl;
 }
 
 XmlTagType XmlTag::GetTagType(string_view str)

@@ -15,7 +15,7 @@ XmlEntity::XmlEntity(const XmlEntity& entity)
     entityType = entity.entityType;
 }
 
-string_view XmlEntity::GetContent() const
+string_view XmlEntity::ToString() const
 {
     return string_view(content);
 }

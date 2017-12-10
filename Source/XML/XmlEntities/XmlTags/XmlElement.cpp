@@ -3,21 +3,35 @@
 
 using namespace XML;
 
-XmlElement::XmlElement(string_view str) : XmlTag(str), charData("")
+// XmlElement::XmlElement(string_view str) : XmlTag(str)
+// {
+//     elementType = GetElementType(str);
+//     elementName = GetElementName(str);
+// }
+
+XmlElement::XmlElement(const XmlEntity& entity) : XmlTag(entity)
 {
-    elementType = GetElementType(str);
-    elementName = GetElementName(str);
+    auto text = entity.ToString();
+    elementType = GetElementType(text);
+    elementName = GetElementName(text);
+    charData = NULL;
 }
 
-XmlElement::XmlElement(const XmlEntity& entity) : XmlTag(entity), charData("")
+XmlElement::XmlElement(queue<XmlEntity> &entities) : XmlTag(entities.front())
 {
-    elementType = GetElementType(GetContent());
-    elementName = GetElementName(GetContent());
-}
-
-XmlElement::XmlElement(queue<XmlEntity> &entities) : XmlTag(entities.front()), charData("")
-{
+    // init element
+    auto text = entities.front().ToString();
+    elementType = GetElementType(text);
+    elementName = GetElementName(text);
+    charData = NULL;
+    entities.pop();
+    // fill all children
     Fill(entities);
+}
+
+XmlElement::~XmlElement()
+{
+    if (charData != NULL) delete charData;
 }
 
 XmlElementType XmlElement::GetElementType() const
@@ -48,14 +62,17 @@ XmlElementType XmlElement::GetElementType(string_view str)
 
 void XmlElement::SetCharData(const XmlData &data)
 {
-    charData = data;
+    if (charData != NULL)
+        delete charData;
+    charData = new XmlData(data);
 }
 
-XmlElement& XmlElement::AddChild(const XmlElement &child)
+// return ptr to Added child
+XmlElement * XmlElement::AddChild(const XmlElement &child)
 {
     children.push_back(child);
 
-    return children.back();
+    return &(children.back());
 }
 
 void XmlElement::Fill(queue<XmlEntity> &elements)
@@ -69,7 +86,7 @@ void XmlElement::Fill(queue<XmlEntity> &elements)
         auto e = elements.front();
         elements.pop();
 
-        auto entityContent = e.GetContent();
+        auto textEntity = e.ToString();
 
         switch (e.GetEntityType())
         {
@@ -80,7 +97,7 @@ void XmlElement::Fill(queue<XmlEntity> &elements)
             }
             case XmlEntityType::Tag:
             {
-                switch (XmlTag::GetTagType(entityContent))
+                switch (XmlTag::GetTagType(textEntity))
                 {
                     case XmlTagType::Definition:
                     {
@@ -91,12 +108,12 @@ void XmlElement::Fill(queue<XmlEntity> &elements)
                     {
                         XmlElement element(e);
 
-                        switch (XmlElement::GetElementType(entityContent))
+                        switch (XmlElement::GetElementType(textEntity))
                         {
                             case XmlElementType::Start:
                             {
                                 auto child = AddChild(element);
-                                child.Fill(elements);    // recursion call - filling all element's children
+                                child->Fill(elements);    // recursion call - filling all element's children
                                 break;
                             }
                             case XmlElementType::End:
@@ -115,6 +132,7 @@ void XmlElement::Fill(queue<XmlEntity> &elements)
                         }
                         break;
                     }
+                    // add more elemnt types later
                     default:
                         throw exception();
                 }
@@ -130,11 +148,18 @@ void XmlElement::PrintContent(int tabs) const
 {
     for(int t = 0; t < tabs; t++)
         cout << "\t";
+    
+    cout << XmlEntity::ToString() << endl;
 
-    cout << GetContent() << endl;
+    if (charData != NULL)
+    {
+        for(int t = 0; t < tabs + 1; t++)
+        cout << "\t";
+        cout << charData->ToString() << endl;
+    }
 
     for(auto child : children)
-        child.PrintContent(tabs + 1);
+        child.PrintContent(tabs + 1);   // recursion
 }
 
 string XmlElement::ToString() const
@@ -142,10 +167,10 @@ string XmlElement::ToString() const
     string text;
 
     if (elementName == "w:p") text += "\xd\xa";
-    else if (elementName == "w:t") text += charData.ToString();
+    else if (elementName == "w:t" && charData != NULL) text += charData->ToString();
     
     for(auto child : children)
-        text += child.ToString();
+        text += child.ToString();   // recursion
         
     return text;
 }

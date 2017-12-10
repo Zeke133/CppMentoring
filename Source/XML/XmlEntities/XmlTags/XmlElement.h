@@ -24,17 +24,17 @@ namespace XML
 
     public:
 
-        XmlElement(string_view str);
-        XmlElement(queue<XmlEntity> &entities);
+        // XmlElement(string_view str);
         XmlElement(const XmlEntity &entity);
-        virtual ~XmlElement() {};
+        XmlElement(queue<XmlEntity> &entities);
+        virtual ~XmlElement();
 
         void SetCharData(const XmlData &data);
-        XmlElement& AddChild(const XmlElement &child);
+        XmlElement * AddChild(const XmlElement &child);
         void Fill(queue<XmlEntity> &elements);
 
-        virtual void PrintContent(int tabs) const;        
-        virtual string ToString() const;
+        virtual void PrintContent(int tabs) const;
+        string ToString() const;
 
         XmlElementType GetElementType() const;
         string_view GetElementName() const;
@@ -44,9 +44,9 @@ namespace XML
         
     private:
         list<XmlElement> children;
-        XmlData charData;
+        XmlData * charData;
 
-        string_view elementName;
+        string elementName;
         XmlElementType elementType;
 
     };

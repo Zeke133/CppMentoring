@@ -39,7 +39,7 @@ void Xml::BuildTree(const vector<char>& xmlFile)
         auto entity = XmlEntity::TakeXmlEntity(begin, end);
 
         // If document definition - filling property
-        if (entity.GetEntityType() == XmlEntityType::Tag && XmlTag::GetTagType(entity.GetContent()) == XmlTagType::Definition)
+        if (entity.GetEntityType() == XmlEntityType::Tag && XmlTag::GetTagType(entity.ToString()) == XmlTagType::Definition)
         {
             if (definition == NULL)
                 definition = new XmlDefinition(entity);
@@ -53,14 +53,14 @@ void Xml::BuildTree(const vector<char>& xmlFile)
         }
     }
 
+    // check for definition
+    if (definition == NULL) throw exception(/*no definition*/);
+
     // give queue to RootElement constructor which will build tree xml elements using recursion
     try
     {
         // creating Root element
-        xmlRoot = new XmlElement(entities.front());
-        entities.pop();
-        // creating all children elements
-        xmlRoot->Fill(entities);
+        xmlRoot = new XmlElement(entities);
     }
     catch(exception)
     {
@@ -70,6 +70,7 @@ void Xml::BuildTree(const vector<char>& xmlFile)
 
 void Xml::PrintTree() const
 {
+    cout << definition->ToString() << endl;
     xmlRoot->PrintContent(0);
 }
 
