@@ -25,9 +25,12 @@ namespace XML
     public:
 
         // XmlElement(string_view str);
-        XmlElement(const XmlEntity &entity);
-        XmlElement(queue<XmlEntity> &entities);
+        XmlElement(const XmlElement &e);
+        XmlElement(const XmlEntity &e);
+        XmlElement(queue<XmlEntity> &e);
         virtual ~XmlElement();
+
+        void operator=(const XmlElement &e);
 
         void SetCharData(const XmlData &data);
         XmlElement * AddChild(const XmlElement &child);

@@ -29,9 +29,34 @@ XmlElement::XmlElement(queue<XmlEntity> &entities) : XmlTag(entities.front())
     Fill(entities);
 }
 
+XmlElement::XmlElement(const XmlElement& entity) : XmlTag(entity)
+{
+    elementType = entity.elementType;
+    elementName = entity.elementName;
+    children = entity.children;
+    if (entity.charData != NULL)
+        charData = new XmlData(*(entity.charData));
+    else
+        charData = NULL;
+}
+
 XmlElement::~XmlElement()
 {
     if (charData != NULL) delete charData;
+}
+
+void XmlElement::operator=(const XmlElement &e)
+{
+    if (this != &e)
+    {
+        elementType = e.elementType;
+        elementName = e.elementName;
+        children = e.children;
+    
+        auto tmp = new XmlData(*(e.charData));
+        if (charData != NULL) delete charData;
+        charData = tmp;
+    }
 }
 
 XmlElementType XmlElement::GetElementType() const

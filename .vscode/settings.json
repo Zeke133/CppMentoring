@@ -34,6 +34,8 @@
         "xstddef": "cpp",
         "xtr1common": "cpp",
         "xmemory0": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "deque": "cpp",
+        "list": "cpp"
     }
 }

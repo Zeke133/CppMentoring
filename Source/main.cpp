@@ -60,6 +60,8 @@ int main(void)
         cout << "XML as text:" << endl;
         cout << xml.ToString() << endl;
 
+        int i;
+        cin >> i;
     }
     catch(const exception& ex)
     {
