@@ -2,47 +2,48 @@
 #include "Xml.h"
 
 
-Xml::Xml(const vector<char>& xmlFile)
-{    
-    try
+Xml::Xml(const vector<char>& sourceFile)
+{
+    xmlFile = sourceFile;
+    BuildTree();
+}
+
+void Xml::BuildTree()
+{
+    // truncate begin and end of document
+    string truncSymbols = " \n\r\t";
     {
-        BuildTree(xmlFile);
-    } 
-    catch(exception)
-    {
-        throw exception();
+        auto front = xmlFile.front();
+        while (string::npos != truncSymbols.find(front))
+        {
+            xmlFile.pop_front();
+            front = xmlFile.front();
+        }
     }
-}
+    {
+        auto back = xmlFile.back();
+        while (string::npos != truncSymbols.find(back))
+        {
+            xmlFile.pop_back();
+            back = xmlFile.back();
+        }
+    }
 
-Xml::~Xml()
-{
-    if (definition != NULL) delete definition;
-    if (xmlRoot != NULL) delete xmlRoot;
-}
-
-void Xml::BuildTree(const vector<char>& xmlFile)
-{
     auto begin = xmlFile.cbegin();
     auto end = xmlFile.cend();
-    end --;
-    
-    // truncate begin and end of document
-    while (begin < end && (*begin == '\n' || *begin == '\r' || *begin == '\t')) begin ++;
-    while (begin <= end && (*end == '\n' || *end == '\r' || *end == '\t')) end --;
-    end ++;
     
     // take entities from text
     queue<XmlEntity> entities;
     while (begin < end)
     {
         // Take entity from text
-        auto entity = XmlEntity::TakeXmlEntity(begin, end);
+        auto entity = XmlBuilder::TakeXmlEntity(begin, end);
 
         // If document definition - filling property
         if (entity.GetEntityType() == XmlEntityType::Tag && XmlTag::GetTagType(entity.ToString()) == XmlTagType::Definition)
         {
-            if (definition == NULL)
-                definition = new XmlDefinition(entity);
+            if (! definition)
+                definition = unique_ptr<XmlDefinition> (new XmlDefinition(entity));
             else
                 throw exception(/*repeat definition, only one definition allowed*/);
         }
@@ -54,13 +55,13 @@ void Xml::BuildTree(const vector<char>& xmlFile)
     }
 
     // check for definition
-    if (definition == NULL) throw exception(/*no definition*/);
+    if (! definition) throw exception(/*no definition*/);
 
     // give queue to RootElement constructor which will build tree xml elements using recursion
     try
     {
         // creating Root element
-        xmlRoot = new XmlElement(entities);
+        xmlRoot = unique_ptr<XmlElement> (new XmlElement(entities));
     }
     catch(exception)
     {

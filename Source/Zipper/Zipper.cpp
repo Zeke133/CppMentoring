@@ -88,21 +88,26 @@ void Zipper::InitZipEndOfCentralDirectory()
     CentralDirectoryEnd = (ZIP_END_OF_CD *)(&(*iter));
 }
 
+const ZIP_CD_FILE_HEADER * Zipper::SetPtrToCDFileHeader(const void * start, uint32_t offset)
+{
+    return static_cast<const ZIP_CD_FILE_HEADER *>(static_cast<const void *>(static_cast<const char*>(start) + offset));
+}
+
 void Zipper::FillZipContent()
 {
-    auto ptr = (ZIP_CD_FILE_HEADER *)(&(*(zipArchive.begin() + CentralDirectoryEnd->offset)));
+    auto centralDirFileHeaderPtr = SetPtrToCDFileHeader(zipArchive.data(), CentralDirectoryEnd->offset);
 
     for (uint16_t i = 0; i < CentralDirectoryEnd->total_entries; i++)
     {
-        if(ptr->signature != ZIP_CD_FILE_HEADER_SIGNATURE)
+        if(centralDirFileHeaderPtr->signature != ZIP_CD_FILE_HEADER_SIGNATURE)
         {
             throw exception(/*"Error in ZIP file CentralDirectory record!"*/);
         }
 
-        ZipContent.push_back(ptr);
+        ZipContent.push_back(centralDirFileHeaderPtr);
 
-        // ptr to next struct
-        ptr = (ZIP_CD_FILE_HEADER *)((uint8_t *)ptr + ptr->getRealSize());
+        // set ptr to next struct
+        centralDirFileHeaderPtr = SetPtrToCDFileHeader(centralDirFileHeaderPtr, centralDirFileHeaderPtr->getRealSize());
     }
 }
 

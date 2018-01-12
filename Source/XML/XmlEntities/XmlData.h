@@ -13,8 +13,7 @@ namespace XML
 
     public:
     
-        //XmlData(string_view str) : XmlEntity(str) {};
-        XmlData(const XmlEntity& entity) : XmlEntity(entity) {};
+        XmlData(string_view content) : XmlEntity(content, XmlEntityType::CharData) {};
         virtual ~XmlData() {};
 
     private:

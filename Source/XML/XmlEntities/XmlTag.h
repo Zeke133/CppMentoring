@@ -25,16 +25,13 @@ namespace XML
 
     public:
 
-        XmlTag(string_view str);
-        XmlTag(const XmlEntity& entity);
+        XmlTag(string_view content, XmlTagType type);
         virtual ~XmlTag() {};
 
         XmlTagType GetTagType() const;
 
         virtual void PrintContent(int tabs) const = 0;
 
-        static XmlTagType GetTagType(string_view str);
-        
     private:
 
         XmlTagType tagType;

@@ -36,6 +36,14 @@
         "xmemory0": "cpp",
         "queue": "cpp",
         "deque": "cpp",
-        "list": "cpp"
+        "list": "cpp",
+        "cmath": "cpp",
+        "cstring": "cpp",
+        "xfacet": "cpp",
+        "xlocale": "cpp",
+        "xlocinfo": "cpp",
+        "xlocnum": "cpp",
+        "array": "cpp",
+        "tuple": "cpp"
     }
 }

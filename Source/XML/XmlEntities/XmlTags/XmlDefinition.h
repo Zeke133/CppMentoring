@@ -13,8 +13,7 @@ namespace XML
 
     public:
 
-        XmlDefinition(string_view str) : XmlTag(str) {};
-        XmlDefinition(const XmlEntity& entity) : XmlTag(entity) {};
+        XmlDefinition(string_view content) : XmlTag(content, XmlTagType::Definition) {};
         virtual ~XmlDefinition() {};
 
         virtual void PrintContent(int tabs) const;

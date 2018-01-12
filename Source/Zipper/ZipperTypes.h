@@ -1,7 +1,7 @@
 #ifndef ZIPPER_TYPES_H
 #define ZIPPER_TYPES_H
 
-#include <string_view>
+using std::string;
 
 enum class VERSION_MADE_BY : uint8_t
 {
@@ -119,9 +119,9 @@ struct ZIP_END_OF_CD    {
     {
         return sizeof(ZIP_END_OF_CD) + this->comment_len;
     }
-    std::string_view GetComment() const
+    string GetComment() const
     {
-        return std::string_view((const char *)(this+1), this->comment_len);
+        return string((const char *)(this+1), this->comment_len);
     }
 };
 #pragma pack(pop)
@@ -150,17 +150,17 @@ struct ZIP_CD_FILE_HEADER    {
     // uint8_t     file_name[];         // the name of the file including an optional relative path. All slashes in the path should be forward slashes '/'.
     // uint8_t     extra_field[];       // Used to store additional information. The field consistes of a sequence of header and data pairs, where the header has a 2 byte identifier and a 2 byte data size field.
     // uint8_t     file_comment[];      // An optional comment for the file.
-    std::string_view GetName() const
+    string GetName() const
     {
-        return std::string_view((const char *)(this+1), this->file_name_len);
+        return string((const char *)(this+1), this->file_name_len);
     }
-    std::string_view GetExtraField() const
+    string GetExtraField() const
     {
-        return std::string_view((const char *)(this+1) + this->file_name_len, this->extra_field_len);
+        return string((const char *)(this+1) + this->file_name_len, this->extra_field_len);
     }
-    std::string_view GetComment() const
+    string GetComment() const
     {
-        return std::string_view((const char *)(this+1) + this->file_name_len + this->extra_field_len, this->file_comm_len);
+        return string((const char *)(this+1) + this->file_name_len + this->extra_field_len, this->file_comm_len);
     }
     uint32_t    getRealSize() const
     {
@@ -186,13 +186,13 @@ struct ZIP_LOCAL_FILE_HEADER    {
     uint16_t    extra_field_len;        // Extra field length 	the length of the extra field below
     // uint8_t     file_name[];            // the name of the file including an optional relative path. All slashes in the path should be forward slashes '/'.
     // uint8_t     extra_field[];          // Used to store additional information. The field consistes of a sequence of header and data pairs, where the header has a 2 byte identifier and a 2 byte data size field.
-    std::string_view GetName() const
+    string GetName() const
     {
-        return std::string_view((const char *)(this+1), this->file_name_len);
+        return string((const char *)(this+1), this->file_name_len);
     }
-    std::string_view GetExtraField() const
+    string GetExtraField() const
     {
-        return std::string_view((const char *)(this+1) + this->file_name_len, this->extra_field_len);
+        return string((const char *)(this+1) + this->file_name_len, this->extra_field_len);
     }
     uint32_t    getRealSize() const
     {

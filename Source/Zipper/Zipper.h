@@ -25,12 +25,13 @@ public:
 
 private:
 
-    const vector<char>  &zipArchive;                // reference to source archive file
+    const vector<char>  zipArchive;                 // source archive file
     ZIP_END_OF_CD *     CentralDirectoryEnd;        // ptr to archive END OF CENTRAL DIRECTORY structure
-    vector<ZIP_CD_FILE_HEADER*> ZipContent;         // all archive CENTRAL DIRECTORY FILE HEADERS structure ptr's
+    vector<const ZIP_CD_FILE_HEADER*> ZipContent;   // all archive CENTRAL DIRECTORY FILE HEADERS structure ptr's
 
     void    InitZipEndOfCentralDirectory();         // Find archive END OF CENTRAL DIRECTORY
     void    FillZipContent();                       // Find all archive CENTRAL DIRECTORY FILE HEADERS
+    const ZIP_CD_FILE_HEADER * SetPtrToCDFileHeader(const void * start, uint32_t offset);   // Give pointer to Central Directory File Header
 
     const ZIP_LOCAL_FILE_HEADER *   GetLocalFileHeader(const string_view fileName) const;   // Get ptr to LOCAL FILE HEADER structure by file name from ZipContent
     

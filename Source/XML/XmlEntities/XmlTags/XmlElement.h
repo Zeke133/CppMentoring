@@ -5,6 +5,7 @@
 #include <list>
 #include <queue>
 #include <iostream>
+#include <memory>
 #include "../XmlTag.h"
 #include "../XmlData.h"
 
@@ -24,17 +25,12 @@ namespace XML
 
     public:
 
-        // XmlElement(string_view str);
-        XmlElement(const XmlElement &e);
-        XmlElement(const XmlEntity &e);
-        XmlElement(queue<XmlEntity> &e);
+        XmlElement(string_view content, string_view name, XmlElementType type) : XmlTag(content, XmlTagType::Element)
+        {
+            elementName = name;
+            elementType = type;
+        };
         virtual ~XmlElement();
-
-        void operator=(const XmlElement &e);
-
-        void SetCharData(const XmlData &data);
-        XmlElement * AddChild(const XmlElement &child);
-        void Fill(queue<XmlEntity> &elements);
 
         virtual void PrintContent(int tabs) const;
         string ToString() const;
@@ -42,12 +38,10 @@ namespace XML
         XmlElementType GetElementType() const;
         string_view GetElementName() const;
 
-        static string_view GetElementName(string_view str);
-        static XmlElementType GetElementType(string_view str);
-        
     private:
+
         list<XmlElement> children;
-        XmlData * charData;
+        unique_ptr<XmlData> charData;
 
         string elementName;
         XmlElementType elementType;

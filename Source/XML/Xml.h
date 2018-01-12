@@ -5,6 +5,7 @@
 #include <string_view>
 #include <queue>
 #include <exception>
+#include <memory>
 
 #include "XmlEntity.h"
 #include "XmlEntities/XmlTag.h"
@@ -20,15 +21,17 @@ class Xml
 {
 
 public:
-    Xml(const vector<char> &xmlFile);
-    ~Xml();
+    Xml(const vector<char> &sourceFile);
+    ~Xml() {};
 
     void PrintTree() const;
     string ToString() const;
 
 private:
-    XmlDefinition * definition;
-    XmlElement * xmlRoot;
+    const vector<char> xmlFile;
+
+    unique_ptr<XmlDefinition> definition;
+    unique_ptr<XmlElement> xmlRoot;
 
     void BuildTree(const vector<char> &xmlFile);
     
