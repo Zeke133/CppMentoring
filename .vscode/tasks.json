@@ -25,6 +25,7 @@
                 "${workspaceRoot}/Source/XML/XmlEntities/XmlTag.cpp",
                 "${workspaceRoot}/Source/XML/XmlEntities/XmlData.cpp",
                 "${workspaceRoot}/Source/XML/XmlEntity.cpp",
+                "${workspaceRoot}/Source/XML/XmlBuilder.cpp",
                 "${workspaceRoot}/Source/XML/Xml.cpp",
                 // Main
                 "${workspaceRoot}/Source/main.cpp",

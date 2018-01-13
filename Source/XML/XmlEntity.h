@@ -20,7 +20,6 @@ namespace XML
 
     public:
         XmlEntity(string_view content, XmlEntityType type);
-        virtual ~XmlEntity() {};
 
         XmlEntityType GetEntityType() const;
         string ToString() const;

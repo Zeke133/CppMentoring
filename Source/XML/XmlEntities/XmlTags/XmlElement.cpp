@@ -13,6 +13,18 @@ string_view XmlElement::GetElementName() const
     return elementName;
 }
 
+void XmlElement::SetCharData(string_view content)
+{
+    charData = XmlData(content);
+}
+
+XmlElement& XmlElement::AddChild(const XmlElement &child)
+{
+    children.push_back(child);
+
+    return children.back();
+}
+
 void XmlElement::PrintContent(int tabs) const
 {
     for(int t = 0; t < tabs; t++)
@@ -20,11 +32,12 @@ void XmlElement::PrintContent(int tabs) const
     
     cout << XmlEntity::ToString() << endl;
 
-    if (charData != NULL)
+    auto data = charData.ToString();
+    if (data.empty() == false)
     {
         for(int t = 0; t < tabs + 1; t++)
         cout << "\t";
-        cout << charData->ToString() << endl;
+        cout << data << endl;
     }
 
     for(auto child : children)
@@ -34,9 +47,10 @@ void XmlElement::PrintContent(int tabs) const
 string XmlElement::ToString() const
 {
     string text;
+    auto data = charData.ToString();
 
     if (elementName == "w:p") text += "\xd\xa";
-    else if (elementName == "w:t" && charData != NULL) text += charData->ToString();
+    else if (elementName == "w:t" && data.empty() == false) text += data;
     
     for(auto child : children)
         text += child.ToString();   // recursion

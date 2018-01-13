@@ -25,12 +25,16 @@ namespace XML
 
     public:
 
-        XmlElement(string_view content, string_view name, XmlElementType type) : XmlTag(content, XmlTagType::Element)
+        XmlElement(string_view content, string_view name, XmlElementType type) :
+            XmlTag(content, XmlTagType::Element),
+            charData(string_view())
         {
             elementName = name;
             elementType = type;
         };
-        virtual ~XmlElement();
+
+        void SetCharData(string_view content);
+        XmlElement& AddChild(const XmlElement &child);
 
         virtual void PrintContent(int tabs) const;
         string ToString() const;
@@ -41,7 +45,7 @@ namespace XML
     private:
 
         list<XmlElement> children;
-        unique_ptr<XmlData> charData;
+        XmlData charData;
 
         string elementName;
         XmlElementType elementType;

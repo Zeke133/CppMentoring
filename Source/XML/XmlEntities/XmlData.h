@@ -14,7 +14,6 @@ namespace XML
     public:
     
         XmlData(string_view content) : XmlEntity(content, XmlEntityType::CharData) {};
-        virtual ~XmlData() {};
 
     private:
 

@@ -5,6 +5,12 @@
 #include <string>
 #include <vector>
 
+#include "XmlEntity.h"
+#include "XmlEntities/XmlTag.h"
+#include "XmlEntities/XmlData.h"
+#include "XmlEntities/XmlTags/XmlElement.h"
+#include "XmlEntities/XmlTags/XmlDefinition.h"
+
 using namespace std;
 
 namespace XML
@@ -20,16 +26,12 @@ namespace XML
 
         static XmlTagType GetTagType(string_view str);
         
-        static string_view GetElementName(string_view str);
+        static string GetElementName(string str);
         static XmlElementType GetElementType(string_view str);
 
-        
-        void SetCharData(const XmlData &data);
-        XmlElement * AddChild(const XmlElement &child);
-        void Fill(queue<XmlEntity> &elements);
+        static void Fill(XmlElement& parent, queue<XmlEntity> &entities);
 
-    private:
-        
+    private:        
 
     };
 

@@ -60,7 +60,7 @@ XmlTagType XmlBuilder::GetTagType(string_view str)
     else return XmlTagType::Element;
 }
 
-string_view XmlBuilder::GetElementName(string_view str)
+string XmlBuilder::GetElementName(string str)
 {
     auto start = str.find_first_not_of("</");
     auto end = str.find_first_of(" />", start);
@@ -76,45 +76,29 @@ XmlElementType XmlBuilder::GetElementType(string_view str)
     else return XmlElementType::Start;
 }
 
-
-void XmlBuilder::SetCharData(const XmlData &data)
-{
-    if (charData != NULL)
-        delete charData;
-    charData = new XmlData(data);
-}
-
-// return ptr to Added child
-XmlElement * XmlBuilder::AddChild(const XmlElement &child)
-{
-    children.push_back(child);
-
-    return &(children.back());
-}
-
-void XmlBuilder::Fill(queue<XmlEntity> &elements)
+void XmlBuilder::Fill(XmlElement& parent, queue<XmlEntity> &entities)
 {
     while(true)
     {
         // recursion end - all elements filled
-        if (elements.empty())
+        if (entities.empty())
             return;
 
-        auto e = elements.front();
-        elements.pop();
+        auto entity = entities.front();
+        entities.pop();
 
-        auto textEntity = e.ToString();
+        auto content = entity.ToString();
 
-        switch (e.GetEntityType())
+        switch (entity.GetEntityType())
         {
             case XmlEntityType::CharData:
             {
-                SetCharData(XmlData(e));
+                parent.SetCharData(content);
                 break;
             }
             case XmlEntityType::Tag:
             {
-                switch (XmlTag::GetTagType(textEntity))
+                switch (XmlBuilder::GetTagType(content))
                 {
                     case XmlTagType::Definition:
                     {
@@ -123,14 +107,16 @@ void XmlBuilder::Fill(queue<XmlEntity> &elements)
                     }
                     case XmlTagType::Element:
                     {
-                        XmlElement element(e);
+                        auto name = XmlBuilder::GetElementName(content);
+                        auto type = XmlBuilder::GetElementType(content);
 
-                        switch (XmlElement::GetElementType(textEntity))
+                        XmlElement element(content, name, type);
+
+                        switch (type)
                         {
                             case XmlElementType::Start:
                             {
-                                auto child = AddChild(element);
-                                child->Fill(elements);    // recursion call - filling all element's children
+                                Fill(parent.AddChild(element), entities);    // recursion call - filling all element's children
                                 break;
                             }
                             case XmlElementType::End:
@@ -141,36 +127,24 @@ void XmlBuilder::Fill(queue<XmlEntity> &elements)
                             }
                             case XmlElementType::Empty:
                             {
-                                AddChild(element);
+                                parent.AddChild(element);
                                 break;
                             }
                             default:
-                                throw exception();
+                                throw invalid_argument("Unknown XML element type");
                         }
                         break;
                     }
                     // add more elemnt types later
                     default:
-                        throw exception();
+                        throw invalid_argument("Unknown XML tag type");
                 }
                 break;
             }
             default:
-                throw exception();
+                throw invalid_argument("Unknown XML entity type");
         }
     }
 }
 
-
-XmlBuilder::XmlElement(queue<XmlEntity> &entities) : XmlTag(entities.front())
-{
-    // init element
-    auto text = entities.front().ToString();
-    elementType = GetElementType(text);
-    elementName = GetElementName(text);
-    charData = NULL;
-    entities.pop();
-    // fill all children
-    Fill(entities);
-}
 

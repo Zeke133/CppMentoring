@@ -7,6 +7,7 @@
 #include <exception>
 #include <memory>
 
+#include "XmlBuilder.h"
 #include "XmlEntity.h"
 #include "XmlEntities/XmlTag.h"
 #include "XmlEntities/XmlData.h"
@@ -28,12 +29,12 @@ public:
     string ToString() const;
 
 private:
-    const vector<char> xmlFile;
+    vector<char> xmlFile;
 
     unique_ptr<XmlDefinition> definition;
     unique_ptr<XmlElement> xmlRoot;
 
-    void BuildTree(const vector<char> &xmlFile);
+    void BuildTree();
     
 };
 

@@ -26,7 +26,6 @@ namespace XML
     public:
 
         XmlTag(string_view content, XmlTagType type);
-        virtual ~XmlTag() {};
 
         XmlTagType GetTagType() const;
 

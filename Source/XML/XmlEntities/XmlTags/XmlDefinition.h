@@ -14,7 +14,6 @@ namespace XML
     public:
 
         XmlDefinition(string_view content) : XmlTag(content, XmlTagType::Definition) {};
-        virtual ~XmlDefinition() {};
 
         virtual void PrintContent(int tabs) const;
         
