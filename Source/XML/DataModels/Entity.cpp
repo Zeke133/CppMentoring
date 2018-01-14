@@ -1,5 +1,5 @@
 
-#include "XmlEntity.h"
+#include "Entity.h"
 
 using namespace XML;
 
@@ -9,12 +9,12 @@ XmlEntity::XmlEntity(string_view content, XmlEntityType type)
     entityType = type;
 }
 
-string XmlEntity::ToString() const
+string XmlEntity::GetContent() const
 {
     return string(content);
 }
 
-XmlEntityType XmlEntity::GetEntityType() const
+XmlEntityType XmlEntity::GetType() const
 {
     return entityType;
 }

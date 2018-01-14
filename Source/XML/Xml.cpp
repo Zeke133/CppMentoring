@@ -1,10 +1,11 @@
 
 #include "Xml.h"
 
-
 Xml::Xml(const vector<char>& sourceFile)
 {
+    // copy source to private field
     xmlFile = sourceFile;
+    // trying to build tree of XML file
     BuildTree();
 }
 
@@ -38,8 +39,8 @@ void Xml::BuildTree()
         auto entity = XmlBuilder::TakeXmlEntity(begin, end);
 
         // If document definition - filling property
-        auto content = entity.ToString();
-        if (entity.GetEntityType() == XmlEntityType::Tag && XmlBuilder::GetTagType(content) == XmlTagType::Definition)
+        auto content = entity.GetContent();
+        if (entity.GetType() == XmlEntityType::Tag && XmlBuilder::GetTagType(content) == XmlTagType::Definition)
         {
             if (! definition)
                 definition = unique_ptr<XmlDefinition> (new XmlDefinition(content));
@@ -59,9 +60,9 @@ void Xml::BuildTree()
     // filling XML elements tree
     auto entity = entities.front();
 
-    if (entity.GetEntityType() == XmlEntityType::Tag)
+    if (entity.GetType() == XmlEntityType::Tag)
     {
-        auto content = entity.ToString();
+        auto content = entity.GetContent();
         if (XmlBuilder::GetTagType(content) == XmlTagType::Element)
         {
             // creating Root element
@@ -77,19 +78,60 @@ void Xml::BuildTree()
         throw invalid_argument("First entity isn't element");
     }
 
-    XmlBuilder::Fill(*xmlRoot, entities);
+    XmlBuilder::FillElement(*xmlRoot, entities);
     
 }
 
 void Xml::PrintTree() const
 {
-    cout << definition->ToString() << endl;
-    xmlRoot->PrintContent(0);
+    cout << definition->GetContent() << endl;
+    PrintTree(*xmlRoot, 0);
 }
 
 string Xml::ToString() const
 {
-    return xmlRoot->ToString();
+    return ToString(*xmlRoot);
+}
+
+void Xml::PrintTree(XmlElement& root, int tabs) const
+{
+    for(int t = 0; t < tabs; t++)
+            cout << "\t";
+
+    cout << root.GetContent() << endl;
+
+    auto data = root.GetData().GetContent();
+    if (data.empty() == false)
+    {
+        for(int t = 0; t < tabs + 1; t++)
+        cout << "\t";
+        cout << data << endl;
+    }
+
+    for (auto child : root.GetChildren())
+    {
+        PrintTree(child, tabs + 1);   // recursion
+    }
+}
+
+string Xml::ToString(XmlElement& root) const
+{
+    string text;
+    auto name = root.GetName();
+
+    if (name == "w:p") text += "\xd\xa";
+    else if (name == "w:t")
+    {
+        auto data = root.GetData().GetContent();
+        if (! data.empty()) text += data;
+    }
+
+    for (auto child : root.GetChildren())
+    {
+        text += ToString(child);    // recursion
+    }
+
+    return text;
 }
 
 

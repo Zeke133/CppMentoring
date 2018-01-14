@@ -1,5 +1,5 @@
 
-#include "XmlTag.h"
+#include "Tag.h"
 
 using namespace XML;
 
@@ -8,7 +8,7 @@ XmlTag::XmlTag(string_view content, XmlTagType type) : XmlEntity(content, XmlEnt
     tagType = type;
 }
 
-XmlTagType XmlTag::GetTagType() const
+XmlTagType XmlTag::GetType() const
 {
     return tagType;
 }

@@ -1,9 +1,7 @@
-#ifndef XML_TAG_H
-#define XML_TAG_H
+#ifndef TAG_H
+#define TAG_H
 
-#include <iostream>
-#include <string_view>
-#include "..\XmlEntity.h"
+#include "../Entity.h"
 
 using namespace std;
 
@@ -27,9 +25,7 @@ namespace XML
 
         XmlTag(string_view content, XmlTagType type);
 
-        XmlTagType GetTagType() const;
-
-        virtual void PrintContent(int tabs) const = 0;
+        XmlTagType GetType() const;
 
     private:
 

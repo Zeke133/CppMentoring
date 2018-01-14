@@ -76,7 +76,7 @@ XmlElementType XmlBuilder::GetElementType(string_view str)
     else return XmlElementType::Start;
 }
 
-void XmlBuilder::Fill(XmlElement& parent, queue<XmlEntity> &entities)
+void XmlBuilder::FillElement(XmlElement& parent, queue<XmlEntity>& entities)
 {
     while(true)
     {
@@ -87,13 +87,13 @@ void XmlBuilder::Fill(XmlElement& parent, queue<XmlEntity> &entities)
         auto entity = entities.front();
         entities.pop();
 
-        auto content = entity.ToString();
+        auto content = entity.GetContent();
 
-        switch (entity.GetEntityType())
+        switch (entity.GetType())
         {
             case XmlEntityType::CharData:
             {
-                parent.SetCharData(content);
+                parent.SetData(content);
                 break;
             }
             case XmlEntityType::Tag:
@@ -116,7 +116,7 @@ void XmlBuilder::Fill(XmlElement& parent, queue<XmlEntity> &entities)
                         {
                             case XmlElementType::Start:
                             {
-                                Fill(parent.AddChild(element), entities);    // recursion call - filling all element's children
+                                FillElement(parent.AddChild(element), entities);    // recursion call - filling all element's children
                                 break;
                             }
                             case XmlElementType::End:

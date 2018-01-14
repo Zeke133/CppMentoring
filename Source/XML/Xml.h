@@ -7,12 +7,8 @@
 #include <exception>
 #include <memory>
 
-#include "XmlBuilder.h"
-#include "XmlEntity.h"
-#include "XmlEntities/XmlTag.h"
-#include "XmlEntities/XmlData.h"
-#include "XmlEntities/XmlTags/XmlElement.h"
-#include "XmlEntities/XmlTags/XmlDefinition.h"
+#include "Processors/XmlBuilder.h"
+#include "DataModels/DataModels.h"
 
 using namespace std;
 
@@ -22,19 +18,23 @@ class Xml
 {
 
 public:
+
     Xml(const vector<char> &sourceFile);
-    ~Xml() {};
 
     void PrintTree() const;
     string ToString() const;
 
 private:
+
     vector<char> xmlFile;
 
     unique_ptr<XmlDefinition> definition;
     unique_ptr<XmlElement> xmlRoot;
 
     void BuildTree();
+
+    void PrintTree(XmlElement& root, int tabs) const;
+    string ToString(XmlElement& root) const;
     
 };
 

@@ -1,9 +1,8 @@
-#ifndef XML_ENTITY_H
-#define XML_ENTITY_H
+#ifndef ENTITY_H
+#define ENTITY_H
 
-#include <string_view>
 #include <string>
-#include <vector>
+#include <string_view>
 
 using namespace std;
 
@@ -21,8 +20,8 @@ namespace XML
     public:
         XmlEntity(string_view content, XmlEntityType type);
 
-        XmlEntityType GetEntityType() const;
-        string ToString() const;
+        XmlEntityType GetType() const;
+        string GetContent() const;
 
     private:
         string content;
