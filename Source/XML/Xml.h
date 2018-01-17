@@ -7,8 +7,8 @@
 #include <exception>
 #include <memory>
 
-#include "Processors/XmlBuilder.h"
 #include "DataModels/DataModels.h"
+#include "Builder/Builder.h"
 
 using namespace std;
 
@@ -21,8 +21,9 @@ public:
 
     Xml(const vector<char> &sourceFile);
 
-    void PrintTree() const;
-    string ToString() const;
+    XmlElement GetRootElement() const;
+
+    void PrintVisualTree() const;
 
 private:
 
@@ -31,10 +32,7 @@ private:
     unique_ptr<XmlDefinition> definition;
     unique_ptr<XmlElement> xmlRoot;
 
-    void BuildTree();
-
     void PrintTree(XmlElement& root, int tabs) const;
-    string ToString(XmlElement& root) const;
     
 };
 

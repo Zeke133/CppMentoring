@@ -6,6 +6,7 @@
 
 #include "Zipper\Zipper.h"
 #include "XML\Xml.h"
+#include "XmlProcessors\DocConverter.h"
 
 using namespace std;
 
@@ -83,10 +84,11 @@ int main(void)
     {
         Xml xml(xmlFile);
         cout << "XML tree:" << endl;
-        xml.PrintTree();
+        xml.PrintVisualTree();
 
         cout << "XML as text:" << endl;
-        cout << xml.ToString() << endl;
+        auto xmlRoot = xml.GetRootElement();
+        cout << DocConverter::ToString(xmlRoot) << endl;
 
         cout << "Press Enter to exit..." << endl;
         cin.get();

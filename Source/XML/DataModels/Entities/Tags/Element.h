@@ -2,7 +2,6 @@
 #define ELEMENT_H
 
 #include <list>
-#include <string>
 
 #include "../Tag.h"
 #include "../Data.h"

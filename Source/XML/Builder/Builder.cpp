@@ -1,4 +1,4 @@
-#include "XmlBuilder.h"
+#include "Builder.h"
 
 using namespace XML;
 
@@ -99,12 +99,7 @@ void XmlBuilder::FillElement(XmlElement& parent, queue<XmlEntity>& entities)
             case XmlEntityType::Tag:
             {
                 switch (XmlBuilder::GetTagType(content))
-                {
-                    case XmlTagType::Definition:
-                    {
-                        // ignore
-                        break;
-                    }
+                {                    
                     case XmlTagType::Element:
                     {
                         auto name = XmlBuilder::GetElementName(content);
@@ -135,7 +130,13 @@ void XmlBuilder::FillElement(XmlElement& parent, queue<XmlEntity>& entities)
                         }
                         break;
                     }
+                    case XmlTagType::Definition: break;
+                    case XmlTagType::Comment: break;
                     // add more elemnt types later
+                    case XmlTagType::DocType: break;
+                    case XmlTagType::ProcInstr: break;
+                    case XmlTagType::CDATA: break;
+                    case XmlTagType::Reference: break;
                     default:
                         throw invalid_argument("Unknown XML tag type");
                 }
@@ -145,6 +146,79 @@ void XmlBuilder::FillElement(XmlElement& parent, queue<XmlEntity>& entities)
                 throw invalid_argument("Unknown XML entity type");
         }
     }
+}
+
+void XmlBuilder::BuildXml(vector<char>& xmlFile, unique_ptr<XmlElement>& xmlRoot, unique_ptr<XmlDefinition>& xmlDefinition)
+{
+    // truncate begin and end of document
+    string truncSymbols = " \n\r\t";
+    {
+        auto front = xmlFile.cbegin();
+        while (string::npos != truncSymbols.find(*front))
+        {
+            xmlFile.erase(front);
+            front = xmlFile.cbegin();
+        }
+    }
+    {
+        while (string::npos != truncSymbols.find(xmlFile.back()))
+        {
+            xmlFile.pop_back();
+        }
+    }
+
+    auto begin = xmlFile.cbegin();
+    auto end = xmlFile.cend();
+    
+    // take entities from text
+    queue<XmlEntity> entities;
+    while (begin < end)
+    {
+        // Take entity from text
+        auto entity = XmlBuilder::TakeXmlEntity(begin, end);
+
+        // If document definition - filling property
+        auto content = entity.GetContent();
+        if (entity.GetType() == XmlEntityType::Tag && XmlBuilder::GetTagType(content) == XmlTagType::Definition)
+        {
+            if (! xmlDefinition)
+                xmlDefinition = unique_ptr<XmlDefinition> (new XmlDefinition(content));
+            else
+                throw invalid_argument("Repeat XmlDefinition tag");
+        }
+        // Add entity to queue
+        else
+        {
+            entities.push(entity); 
+        }
+    }
+
+    // check for definition
+    if (! xmlDefinition) throw invalid_argument("No XmlDefinition");
+
+    // filling XML elements tree
+    auto entity = entities.front();
+
+    if (entity.GetType() == XmlEntityType::Tag)
+    {
+        auto content = entity.GetContent();
+        if (XmlBuilder::GetTagType(content) == XmlTagType::Element)
+        {
+            // creating Root element
+            auto name = XmlBuilder::GetElementName(content);
+            auto type = XmlBuilder::GetElementType(content);
+            xmlRoot = unique_ptr<XmlElement> (new XmlElement(content, name, type));
+
+            entities.pop();
+        }
+    }
+    else
+    {
+        throw invalid_argument("First entity isn't element");
+    }
+
+    XmlBuilder::FillElement(*xmlRoot, entities);
+    
 }
 
 
