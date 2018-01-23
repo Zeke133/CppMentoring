@@ -31,7 +31,7 @@ private:
 
     void    InitZipEndOfCentralDirectory();         // Find archive END OF CENTRAL DIRECTORY
     void    FillZipContent();                       // Find all archive CENTRAL DIRECTORY FILE HEADERS
-    const ZIP_CD_FILE_HEADER * SetPtrToCDFileHeader(const void * start, uint32_t offset);   // Give pointer to Central Directory File Header
+    const ZIP_CD_FILE_HEADER * GetPtrToCDFileHeader(const void * start, uint32_t offset);   // Give pointer to Central Directory File Header
 
     const ZIP_LOCAL_FILE_HEADER *   GetLocalFileHeader(const string_view fileName) const;   // Get ptr to LOCAL FILE HEADER structure by file name from ZipContent
     

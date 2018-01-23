@@ -1,6 +1,7 @@
 
 #include "Element.h"
 
+using namespace std;
 using namespace XML;
 
 XmlElement::XmlElement(string_view content, string_view name, XmlElementType type) :

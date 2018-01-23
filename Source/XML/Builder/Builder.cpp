@@ -148,30 +148,27 @@ void XmlBuilder::FillElement(XmlElement& parent, queue<XmlEntity>& entities)
     }
 }
 
-void XmlBuilder::BuildXml(vector<char>& xmlFile, unique_ptr<XmlElement>& xmlRoot, unique_ptr<XmlDefinition>& xmlDefinition)
+tuple<unique_ptr<XmlElement>, unique_ptr<XmlDefinition>> XmlBuilder::BuildXml(const vector<char>& sourceFile)
 {
     // truncate begin and end of document
     string truncSymbols = " \n\r\t";
+    auto begin = sourceFile.cbegin();
+    auto end = sourceFile.cend();
+    
+    while (string::npos != truncSymbols.find(*begin) && begin < end)
     {
-        auto front = xmlFile.cbegin();
-        while (string::npos != truncSymbols.find(*front))
-        {
-            xmlFile.erase(front);
-            front = xmlFile.cbegin();
-        }
+        begin ++;
     }
+        
+    while (string::npos != truncSymbols.find(*(end-1)) && begin < end)
     {
-        while (string::npos != truncSymbols.find(xmlFile.back()))
-        {
-            xmlFile.pop_back();
-        }
+        end --;
     }
-
-    auto begin = xmlFile.cbegin();
-    auto end = xmlFile.cend();
     
     // take entities from text
     queue<XmlEntity> entities;
+    unique_ptr<XmlDefinition> xmlDefinition;
+
     while (begin < end)
     {
         // Take entity from text
@@ -182,7 +179,7 @@ void XmlBuilder::BuildXml(vector<char>& xmlFile, unique_ptr<XmlElement>& xmlRoot
         if (entity.GetType() == XmlEntityType::Tag && XmlBuilder::GetTagType(content) == XmlTagType::Definition)
         {
             if (! xmlDefinition)
-                xmlDefinition = unique_ptr<XmlDefinition> (new XmlDefinition(content));
+                xmlDefinition = make_unique<XmlDefinition> (content);
             else
                 throw invalid_argument("Repeat XmlDefinition tag");
         }
@@ -197,6 +194,7 @@ void XmlBuilder::BuildXml(vector<char>& xmlFile, unique_ptr<XmlElement>& xmlRoot
     if (! xmlDefinition) throw invalid_argument("No XmlDefinition");
 
     // filling XML elements tree
+    unique_ptr<XmlElement> xmlRoot;
     auto entity = entities.front();
 
     if (entity.GetType() == XmlEntityType::Tag)
@@ -207,7 +205,7 @@ void XmlBuilder::BuildXml(vector<char>& xmlFile, unique_ptr<XmlElement>& xmlRoot
             // creating Root element
             auto name = XmlBuilder::GetElementName(content);
             auto type = XmlBuilder::GetElementType(content);
-            xmlRoot = unique_ptr<XmlElement> (new XmlElement(content, name, type));
+            xmlRoot = make_unique<XmlElement> (content, name, type);
 
             entities.pop();
         }
@@ -218,7 +216,8 @@ void XmlBuilder::BuildXml(vector<char>& xmlFile, unique_ptr<XmlElement>& xmlRoot
     }
 
     XmlBuilder::FillElement(*xmlRoot, entities);
-    
+
+    return tie(xmlRoot, xmlDefinition);
 }
 
 

@@ -3,8 +3,6 @@
 
 #include "../Tag.h"
 
-using namespace std;
-
 namespace XML
 {
     class XmlDefinition : public XmlTag
@@ -12,7 +10,7 @@ namespace XML
 
     public:
 
-        XmlDefinition(string_view content);
+        XmlDefinition(std::string_view content);
         
     private:
 

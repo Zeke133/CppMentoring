@@ -3,8 +3,6 @@
 
 #include "../Entity.h"
 
-using namespace std;
-
 namespace XML
 {
     class XmlData : public XmlEntity
@@ -12,7 +10,7 @@ namespace XML
 
     public:
     
-        XmlData(string_view content);
+        XmlData(std::string_view content);
 
     private:
 

@@ -1,6 +1,7 @@
 
 #include "Entity.h"
 
+using namespace std;
 using namespace XML;
 
 XmlEntity::XmlEntity(string_view content, XmlEntityType type)

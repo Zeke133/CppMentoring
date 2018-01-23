@@ -1,12 +1,13 @@
 
 #include "Xml.h"
 
+using namespace std;
+using namespace XML;
+
 Xml::Xml(const vector<char>& sourceFile)
 {
-    // copy source to private field
-    xmlFile = sourceFile;
     // trying to build tree of XML file
-    XmlBuilder::BuildXml(xmlFile, xmlRoot, definition);
+    tie(xmlRoot, definition) = XmlBuilder::BuildXml(sourceFile);
 }
 
 XmlElement Xml::GetRootElement() const

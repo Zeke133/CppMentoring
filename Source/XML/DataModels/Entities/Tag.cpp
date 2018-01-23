@@ -1,6 +1,7 @@
 
 #include "Tag.h"
 
+using namespace std;
 using namespace XML;
 
 XmlTag::XmlTag(string_view content, XmlTagType type) : XmlEntity(content, XmlEntityType::Tag)

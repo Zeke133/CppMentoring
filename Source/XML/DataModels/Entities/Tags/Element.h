@@ -6,8 +6,6 @@
 #include "../Tag.h"
 #include "../Data.h"
 
-using namespace std;
-
 namespace XML
 {
     enum class XmlElementType
@@ -22,22 +20,22 @@ namespace XML
 
     public:
 
-        XmlElement(string_view content, string_view name, XmlElementType type);
+        XmlElement(std::string_view content, std::string_view name, XmlElementType type);
 
-        void SetData(string_view content);
+        void SetData(std::string_view content);
         XmlElement& AddChild(const XmlElement &child);      // returns reference to added child
 
         XmlElementType GetType() const;
-        string GetName() const;
-        list<XmlElement> GetChildren() const;
+        std::string GetName() const;
+        std::list<XmlElement> GetChildren() const;
         XmlData GetData() const;
 
     private:
 
-        list<XmlElement> children;
+        std::list<XmlElement> children;
         XmlData data;
 
-        string elementName;
+        std::string elementName;
         XmlElementType elementType;
 
     };

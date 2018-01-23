@@ -7,6 +7,7 @@
 #include <queue>
 #include <stdexcept>
 #include <memory>
+#include <tuple>
 
 #include "../DataModels/DataModels.h"
 
@@ -21,7 +22,7 @@ namespace XML
     public:
 
         // builing XML. truncates source file, fills xmlRoot with all children and xmlDefinition.
-        static void BuildXml(vector<char>& sourceFile, unique_ptr<XmlElement>& xmlRoot, unique_ptr<XmlDefinition>& xmlDefinition);
+        static tuple<unique_ptr<XmlElement>, unique_ptr<XmlDefinition>> BuildXml(const vector<char>& sourceFile);
 
     private:
     

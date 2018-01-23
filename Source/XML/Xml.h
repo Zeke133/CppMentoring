@@ -6,13 +6,10 @@
 #include <queue>
 #include <exception>
 #include <memory>
+#include <tuple>
 
 #include "DataModels/DataModels.h"
 #include "Builder/Builder.h"
-
-using namespace std;
-
-using namespace XML;
 
 class Xml
 {
@@ -21,19 +18,18 @@ public:
 
     Xml(const vector<char> &sourceFile);
 
-    XmlElement GetRootElement() const;
+    XML::XmlElement GetRootElement() const;
 
     void PrintVisualTree() const;
 
 private:
 
-    vector<char> xmlFile;
+    unique_ptr<XML::XmlDefinition> definition;
+    unique_ptr<XML::XmlElement> xmlRoot;
 
-    unique_ptr<XmlDefinition> definition;
-    unique_ptr<XmlElement> xmlRoot;
-
-    void PrintTree(XmlElement& root, int tabs) const;
-    
+    void PrintTree(XML::XmlElement& root, int tabs) const;
+        
 };
+
 
 #endif

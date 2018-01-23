@@ -1,5 +1,6 @@
 #include "DocConverter.h"
 
+using namespace std;
 using namespace XML;
 
 string DocConverter::ToString(XmlElement& root)

@@ -9,21 +9,14 @@
 
 #include "../XML/DataModels/DataModels.h"
 
-using namespace std;
+class DocConverter
+{
 
-namespace XML
-{   
-
-    class DocConverter
-    {
-
-    public:
+public:
         
-        static string ToString(XmlElement& rootOfDocument);
+    static std::string ToString(XML::XmlElement& rootOfDocument);
 
-    private:        
-
-    };
+private:        
 
 };
 

@@ -4,8 +4,6 @@
 #include <string>
 #include <string_view>
 
-using namespace std;
-
 namespace XML
 {
     enum class XmlEntityType : uint8_t
@@ -18,13 +16,13 @@ namespace XML
     {
 
     public:
-        XmlEntity(string_view content, XmlEntityType type);
+        XmlEntity(std::string_view content, XmlEntityType type);
 
         XmlEntityType GetType() const;
-        string GetContent() const;
+        std::string GetContent() const;
 
     private:
-        string content;
+        std::string content;
         XmlEntityType entityType;
 
     };

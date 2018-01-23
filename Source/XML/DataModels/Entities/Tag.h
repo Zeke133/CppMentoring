@@ -3,8 +3,6 @@
 
 #include "../Entity.h"
 
-using namespace std;
-
 namespace XML
 {
     enum class XmlTagType : uint8_t
@@ -23,7 +21,7 @@ namespace XML
 
     public:
 
-        XmlTag(string_view content, XmlTagType type);
+        XmlTag(std::string_view content, XmlTagType type);
 
         XmlTagType GetType() const;
 
