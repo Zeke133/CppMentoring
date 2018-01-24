@@ -149,7 +149,7 @@ void XmlBuilder::FillElement(XmlElement& parent, queue<XmlEntity>& entities)
     }
 }
 
-tuple<unique_ptr<XmlElement>, unique_ptr<XmlDefinition>> XmlBuilder::BuildXml(const vector<char>& sourceFile)
+tuple<unique_ptr<XmlElement>, unique_ptr<XmlDefinition>> XmlBuilder::BuildXmlElementAndDefinition(const vector<char>& sourceFile)
 {
     // truncate begin and end of document
     string truncSymbols = " \n\r\t";

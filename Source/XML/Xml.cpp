@@ -7,7 +7,7 @@ using namespace XML;
 Xml::Xml(const vector<char>& sourceFile)
 {
     // trying to build tree of XML file
-    tie(xmlRoot, definition) = XmlBuilder::BuildXml(sourceFile);
+    tie(xmlRoot, definition) = XmlBuilder::BuildXmlElementAndDefinition(sourceFile);
 }
 
 XmlElement Xml::GetRootElement() const

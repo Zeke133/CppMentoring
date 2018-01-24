@@ -20,7 +20,7 @@ namespace XML
     public:
 
         // builing XML. truncates source file, fills xmlRoot with all children and xmlDefinition.
-        static std::tuple<std::unique_ptr<XmlElement>, std::unique_ptr<XmlDefinition>> BuildXml(const std::vector<char>& sourceFile);
+        static std::tuple<std::unique_ptr<XmlElement>, std::unique_ptr<XmlDefinition>> BuildXmlElementAndDefinition(const std::vector<char>& sourceFile);
 
     private:
     
