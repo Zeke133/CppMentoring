@@ -16,7 +16,7 @@ class Xml
 
 public:
 
-    Xml(const vector<char> &sourceFile);
+    Xml(const std::vector<char> &sourceFile);
 
     XML::XmlElement GetRootElement() const;
 
@@ -24,8 +24,8 @@ public:
 
 private:
 
-    unique_ptr<XML::XmlDefinition> definition;
-    unique_ptr<XML::XmlElement> xmlRoot;
+    std::unique_ptr<XML::XmlDefinition> definition;
+    std::unique_ptr<XML::XmlElement> xmlRoot;
 
     void PrintTree(XML::XmlElement& root, int tabs) const;
         

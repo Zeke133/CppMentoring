@@ -1,5 +1,6 @@
 #include "Builder.h"
 
+using namespace std;
 using namespace XML;
 
 XmlEntityType XmlBuilder::GetEntityType(string_view str)
@@ -217,7 +218,7 @@ tuple<unique_ptr<XmlElement>, unique_ptr<XmlDefinition>> XmlBuilder::BuildXml(co
 
     XmlBuilder::FillElement(*xmlRoot, entities);
 
-    return tie(xmlRoot, xmlDefinition);
+    return make_tuple(move(xmlRoot), move(xmlDefinition));
 }
 
 

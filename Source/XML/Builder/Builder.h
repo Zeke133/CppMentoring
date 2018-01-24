@@ -11,8 +11,6 @@
 
 #include "../DataModels/DataModels.h"
 
-using namespace std;
-
 namespace XML
 {   
 
@@ -22,25 +20,25 @@ namespace XML
     public:
 
         // builing XML. truncates source file, fills xmlRoot with all children and xmlDefinition.
-        static tuple<unique_ptr<XmlElement>, unique_ptr<XmlDefinition>> BuildXml(const vector<char>& sourceFile);
+        static std::tuple<std::unique_ptr<XmlElement>, std::unique_ptr<XmlDefinition>> BuildXml(const std::vector<char>& sourceFile);
 
     private:
     
         // parsing text for entities
-        static XmlEntity TakeXmlEntity(vector<char>::const_iterator &it, vector<char>::const_iterator end);
+        static XmlEntity TakeXmlEntity(std::vector<char>::const_iterator &it, std::vector<char>::const_iterator end);
 
         // entity level
-        static XmlEntityType GetEntityType(string_view str);
+        static XmlEntityType GetEntityType(std::string_view str);
 
         // tag level
-        static XmlTagType GetTagType(string_view str);
+        static XmlTagType GetTagType(std::string_view str);
         
         // element level
-        static string GetElementName(string str);
-        static XmlElementType GetElementType(string_view str);
+        static std::string GetElementName(std::string str);
+        static XmlElementType GetElementType(std::string_view str);
 
         // filling tree of elements
-        static void FillElement(XmlElement& root, queue<XmlEntity> &entities);  
+        static void FillElement(XmlElement& root, std::queue<XmlEntity> &entities);  
 
     };
 
