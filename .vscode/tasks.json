@@ -41,6 +41,37 @@
             "problemMatcher": [
                 "$gcc"
             ]
+        },
+        {
+            "label": "test",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-isystem",
+                "c:/Developement/googleTest/googletest/include",
+                "-pthread",
+                // Main
+                "${workspaceRoot}/Source/UnitTests/UnitTests.cpp",
+                "${workspaceRoot}/Source/XML/DataModels/Entity.cpp",
+                // Flags
+                // "-L",
+                "c:/Developement/googleTest/googletest/build/gtest_main.a",
+                // "${workspaceRoot}/Lib",
+                // "-l",
+                // "z",
+                "-o",
+                "test",
+                //
+                "-Wall",
+                "-std=c++17"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
         }
     ]
 }
