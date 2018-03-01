@@ -30,6 +30,9 @@
                 "${workspaceRoot}/Source/XmlProcessors/DocConverter.cpp",
                 // Main
                 "${workspaceRoot}/Source/main.cpp",
+                // output
+                "-o",
+                "bin/application",
                 // Flags
                 "-Wall",
                 "-std=c++17"
@@ -50,18 +53,17 @@
                 "-isystem",
                 "c:/Developement/googleTest/googletest/include",
                 "-pthread",
-                // Main
+                // TestCases
                 "${workspaceRoot}/Source/UnitTests/UnitTests.cpp",
-                "${workspaceRoot}/Source/XML/DataModels/Entity.cpp",
-                // Flags
-                // "-L",
+                // Tested modules
+                "${workspaceRoot}/Source/Zipper/Zipper.cpp",
+                "${workspaceRoot}/Source/Zipper/Puff/puff.c",
+                // TestFramework lib
                 "c:/Developement/googleTest/googletest/build/gtest_main.a",
-                // "${workspaceRoot}/Lib",
-                // "-l",
-                // "z",
+                // output
                 "-o",
-                "test",
-                //
+                "bin/test",
+                // compliler flags
                 "-Wall",
                 "-std=c++17"
             ],

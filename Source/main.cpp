@@ -17,12 +17,15 @@ int main(void)
     vector<char> docxFile;
     vector<char> xmlFile;
 
-    cout << "Input full file name to open: ";
+    cout << "Input file name to open or press Enter for default sample: ";
     getline(cin, docxFileName);
 
     // reading .docx file
     try
     {
+        if (docxFileName.empty()) {
+            docxFileName = "TestData/text.docx";
+        }
         ifstream fileStream(docxFileName, ios::in | ios::binary);
 
         if(!fileStream.is_open())

@@ -48,6 +48,7 @@
                 "C:/mingw64/x86_64-7.2.0-posix-seh-rt_v5-rev0/mingw64/x86_64-w64-mingw32/include",
                 "C:/mingw64/x86_64-7.2.0-posix-seh-rt_v5-rev0/mingw64/lib/gcc/x86_64-w64-mingw32/7.2.0/include/c++",
                 "C:/mingw64/x86_64-7.2.0-posix-seh-rt_v5-rev0/mingw64/lib/gcc/x86_64-w64-mingw32/7.2.0/include/ssp",
+                "C:/Developement/googleTest/googletest/include",
                 "${workspaceRoot}"
             ],
             "defines": [
@@ -57,10 +58,6 @@
             "intelliSenseMode": "clang-x64",
             "browse": {
                 "path": [
-                    "C:/mingw64/x86_64-7.2.0-posix-seh-rt_v5-rev0/mingw64/x86_64-w64-mingw32/include",
-                    "C:/mingw64/x86_64-7.2.0-posix-seh-rt_v5-rev0/mingw64/lib/gcc/x86_64-w64-mingw32/7.2.0/include/c++",
-                    "C:/mingw64/x86_64-7.2.0-posix-seh-rt_v5-rev0/mingw64/lib/gcc/x86_64-w64-mingw32/7.2.0/include/ssp",
-                    "${workspaceRoot}"
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""
