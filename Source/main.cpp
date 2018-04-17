@@ -24,7 +24,7 @@ int main(void)
     try
     {
         if (docxFileName.empty()) {
-            docxFileName = "TestData/text.docx";
+            docxFileName = "../TestData/text.docx";
         }
         ifstream fileStream(docxFileName, ios::in | ios::binary);
 
