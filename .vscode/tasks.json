@@ -46,12 +46,13 @@
             ]
         },
         {
-            "label": "test",
+            "label": "test_build",
+            "identifier": "test_build",
             "type": "shell",
             "command": "g++",
             "args": [
                 "-isystem",
-                "c:/Developement/googleTest/googletest/include",
+                "${workspaceRoot}/../googleTest/googletest/include",
                 "-pthread",
                 // TestCases
                 "${workspaceRoot}/Source/UnitTests/UnitTests.cpp",
@@ -59,7 +60,7 @@
                 "${workspaceRoot}/Source/Zipper/Zipper.cpp",
                 "${workspaceRoot}/Source/Zipper/Puff/puff.c",
                 // TestFramework lib
-                "c:/Developement/googleTest/googletest/build/gtest_main.a",
+                "${workspaceRoot}/../googleTest/googletest/build/gtest_main.a",
                 // output
                 "-o",
                 "bin/test",
@@ -74,6 +75,16 @@
             "problemMatcher": [
                 "$gcc"
             ]
+        },
+        {
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "label": "test_run",
+            "dependsOn": "test_build",
+            "type": "shell",
+            "command": "${workspaceRoot}/Bin/test"            
         }
     ]
 }
