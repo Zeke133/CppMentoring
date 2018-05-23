@@ -10,17 +10,20 @@ namespace
 {
 
 	// The fixture for testing class Zipper.
-	class ZipTest : public ::testing::Test
-	{
+	class ZipTest : public ::testing::Test {
 
 	protected:
-	
+
 		ZipTest() {}
 
 		virtual ~ZipTest() {}
 
-		virtual void SetUp()
-		{
+		virtual void SetUp() {}
+
+		virtual void TearDown() {}
+
+		static void SetUpTestCase() {
+
 			ifstream fileStream("TestData/text.docx", ios::in | ios::binary);
 
 			if (!fileStream.is_open())
@@ -31,7 +34,7 @@ namespace
 			fileStream.close();
 		}
 
-		virtual void TearDown() {}
+		static void TearDownTestCase() {}
 
 		// A predicate-formatter for asserting that file has right size.
 		::testing::AssertionResult AssertRightFileSize(const char *name_expr,
@@ -49,14 +52,13 @@ namespace
 		}
 
 		// Objects declared here can be used by all tests in the test case for Zipper.
-		vector<char> docxFile;
+		static vector<char> docxFile;
 
-		struct filesAndSizes
-		{
+		struct filesAndSizes {
 			string name;
 			size_t size;
 		};
-		vector<struct filesAndSizes> docxContent{
+		vector<struct filesAndSizes> docxContent {
 			{"[Content_Types].xml", 1312},
 			{"_rels/.rels", 590},
 			{"word/_rels/document.xml.rels", 817},
@@ -70,6 +72,8 @@ namespace
 			{"word/styles.xml", 29651},
 		};
 	};
+
+	vector<char> ZipTest::docxFile;
 
 	TEST_F(ZipTest, GetZipContent_ExpectingNoThrow) {
 
@@ -148,8 +152,8 @@ namespace
 
 } // namespace
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
+
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
 }
