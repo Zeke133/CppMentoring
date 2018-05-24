@@ -9,10 +9,29 @@
 namespace
 {
 
+	struct FilesAndSizes {
+		string name;
+		size_t size;
+	};
+
+	vector<struct FilesAndSizes> docxContent {
+		{"[Content_Types].xml", 1312},
+		{"_rels/.rels", 590},
+		{"word/_rels/document.xml.rels", 817},
+		{"word/document.xml", 3644},
+		{"word/theme/theme1.xml", 6850},
+		{"word/settings.xml", 2561},
+		{"word/fontTable.xml", 1340},
+		{"word/webSettings.xml", 590},
+		{"docProps/app.xml", 712},
+		{"docProps/core.xml", 777},
+		{"word/styles.xml", 29651},
+	};
+
 	// The fixture for testing class Zipper.
 	class ZipTest : public ::testing::Test {
 
-	protected:
+	public:
 
 		ZipTest() {}
 
@@ -53,24 +72,13 @@ namespace
 
 		// Objects declared here can be used by all tests in the test case for Zipper.
 		static vector<char> docxFile;
+	};
 
-		struct filesAndSizes {
-			string name;
-			size_t size;
-		};
-		vector<struct filesAndSizes> docxContent {
-			{"[Content_Types].xml", 1312},
-			{"_rels/.rels", 590},
-			{"word/_rels/document.xml.rels", 817},
-			{"word/document.xml", 3644},
-			{"word/theme/theme1.xml", 6850},
-			{"word/settings.xml", 2561},
-			{"word/fontTable.xml", 1340},
-			{"word/webSettings.xml", 590},
-			{"docProps/app.xml", 712},
-			{"docProps/core.xml", 777},
-			{"word/styles.xml", 29651},
-		};
+	class ZipTestContent :	public ZipTest,
+							public ::testing::WithParamInterface<FilesAndSizes> {
+
+	public:
+
 	};
 
 	vector<char> ZipTest::docxFile;
@@ -80,80 +88,77 @@ namespace
 		EXPECT_NO_THROW(
 			{
 				Zipper zipArchive(docxFile);
-				auto content = zipArchive.GetZipContent();
+				zipArchive.GetZipContent();
 			});
 	}
 
 	TEST_F(ZipTest, GetZipContent_AmountOfFiles) {
 
 		Zipper zipArchive(docxFile);
-		auto content = zipArchive.GetZipContent();
-		EXPECT_EQ(docxContent.size(), content.size());
+		EXPECT_EQ(docxContent.size(), zipArchive.GetZipContent().size());
 	}
 
 	TEST_F(ZipTest, GetZipContent_NamesOfFiles) {
 
 		Zipper zipArchive(docxFile);
 		auto content = zipArchive.GetZipContent();
-		auto filePtr = content.begin();
+		auto fileIt = content.begin();
 		for (auto expectedFile : docxContent)
 		{
-			EXPECT_EQ(expectedFile.name, *filePtr++);
+			EXPECT_EQ(expectedFile.name, *fileIt++);
 		}
 	}
 
-	TEST_F(ZipTest, GetFileUncompressedSize_ExpectNoThrow) {
+	TEST_P(ZipTestContent, GetFileUncompressedSize_ExpectNoThrow) {
 
 		EXPECT_NO_THROW(
 			{
 				Zipper zipArchive(docxFile);
-
-				for (auto file : docxContent)
-				{
-					zipArchive.GetFileUncompressedSize(file.name);
-				}
+				zipArchive.GetFileUncompressedSize(GetParam().name);
 			});
 	}
 
-	TEST_F(ZipTest, GetFileUncompressedSize_CheckOfSize) {
+	TEST_P(ZipTestContent, GetFileUncompressedSize_CheckOfSize) {
 
 		Zipper zipArchive(docxFile);
-
-		for (auto file : docxContent)
-		{
-			EXPECT_PRED_FORMAT3(AssertRightFileSize, file.name, zipArchive.GetFileUncompressedSize(file.name), file.size);
-		}
+		auto file = GetParam();
+		EXPECT_PRED_FORMAT3(AssertRightFileSize, file.name, zipArchive.GetFileUncompressedSize(file.name), file.size);
 	}
 
-	TEST_F(ZipTest, GetFile_ExpectNoThrow) {
+	TEST_P(ZipTestContent, GetFile_ExpectNoThrow) {
 
 		EXPECT_NO_THROW(
 			{
 				Zipper zipArchive(docxFile);
-				auto file = zipArchive.GetFile("_rels/.rels");
+				zipArchive.GetFile(GetParam().name);
 			});
 	}
 
-	TEST_F(ZipTest, GetFile_CheckOfSize) {
+	TEST_P(ZipTestContent, GetFile_CheckOfSize) {
 
 		Zipper zipArchive(docxFile);
-		auto file = zipArchive.GetFile("_rels/.rels");
-		EXPECT_EQ(590, file.size());
+		auto file = zipArchive.GetFile(GetParam().name);
+		EXPECT_EQ(GetParam().size, file.size());
 	}
 
-	TEST_F(ZipTest, GetFile_CheckOfContent) {
+	TEST_P(ZipTestContent, GetFile_CheckOfContent) {
 
 		Zipper zipArchive(docxFile);
-		auto file = zipArchive.GetFile("_rels/.rels");
+		auto file = zipArchive.GetFile(GetParam().name);
 		string fileMaster = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>";
 		string fileExtracted(file.data(), fileMaster.size());
 		EXPECT_EQ(fileMaster, fileExtracted);
 	}
+	
+	INSTANTIATE_TEST_CASE_P(ContentOfText_docx,
+                        ZipTestContent,
+                        ::testing::ValuesIn(docxContent));
 
 } // namespace
 
 int main(int argc, char **argv) {
 
 	::testing::InitGoogleTest(&argc, argv);
+
 	return RUN_ALL_TESTS();
 }
