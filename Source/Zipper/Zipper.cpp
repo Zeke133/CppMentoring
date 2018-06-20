@@ -2,9 +2,9 @@
 
 using namespace std;
 
-Zipper::Zipper(const vector<char> &file) :
-        zipArchive(file)
-{   
+Zipper::Zipper(ifstream &file) :
+        zipArchive((istreambuf_iterator<char> (file)), istreambuf_iterator<char> ())
+{    
     try
     {
         InitZipEndOfCentralDirectory();

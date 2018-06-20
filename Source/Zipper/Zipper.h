@@ -2,6 +2,7 @@
 #define ZIPPER_H
 
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 #include <exception>
@@ -16,7 +17,7 @@ class Zipper
 
 public:
 
-    Zipper(const vector<char> &sourceFile);         // takes reference to .zip source file
+    Zipper(ifstream &sourceFile);             // takes reference to .zip source file stream
     ~Zipper();
 
     vector<string>  GetZipContent() const;          // get names of all files in archive

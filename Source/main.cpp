@@ -14,13 +14,12 @@ using namespace std;
 int main(void)
 {    
     string docxFileName;
-    vector<char> docxFile;
     vector<char> xmlFile;
 
     cout << "Input file name to open or press Enter for default sample: ";
     getline(cin, docxFileName);
 
-    // reading .docx file
+    // extracting "document.xml" file from archive
     try
     {
         if (docxFileName.empty()) {
@@ -34,31 +33,7 @@ int main(void)
             return 1;
         }
 
-        fileStream.seekg(0, fileStream.end);
-        int32_t len = fileStream.tellg();
-        fileStream.seekg(0, fileStream.beg);
-        cout << "File size: " << len << endl; 
-
-        docxFile.insert(docxFile.cbegin(), (istreambuf_iterator<char> (fileStream)), istreambuf_iterator<char> ());
-    
-        if (!fileStream)
-            cerr << "Error: only " << fileStream.gcount() << " could be read\n";
-
-        fileStream.close(); 
-    }
-    catch(const exception& ex)
-    {
-        cerr << "Error in reading file. " << ex.what() << endl;
-    }
-    catch(...)
-    {
-        cerr << "Error in reading file. User error." << endl;
-    }
-    
-    // extracting "document.xml" file from archive
-    try
-    {
-        Zipper zip(docxFile);
+        Zipper zip(fileStream);
 
         auto filesNames = zip.GetZipContent();
         cout << "ZipContent:" << endl;
